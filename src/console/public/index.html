@@ -7,103 +7,186 @@
   <meta name="description" content="Korta keeps a small shop's shelves stocked: it sources, compares and pays suppliers with x402 on Stellar testnet.">
   <link rel="icon" type="image/svg+xml" href="brand/korta-icon.svg">
   <link rel="apple-touch-icon" href="brand/korta-icon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script>
+    // Theme before first paint: saved choice, else the device setting.
+    try {
+      const saved = localStorage.getItem("korta-theme");
+      if (saved === "dark" || (!saved && matchMedia("(prefers-color-scheme: dark)").matches)) document.documentElement.classList.add("dark");
+    } catch { /* storage blocked: light */ }
+  </script>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+<div class="app">
+
   <header class="top">
-    <div class="brand">
-      <h1>
-        <picture>
-          <source srcset="brand/korta-logo-light.svg" media="(prefers-color-scheme: dark)">
-          <img class="wordmark" src="brand/korta-logo.svg" alt="Korta" width="327" height="82">
-        </picture>
-      </h1>
-      <p id="shopName" class="muted small">Restock agent</p>
-    </div>
-    <span class="badge" title="All payments use test USDC with no real value">Stellar testnet · demo prices</span>
+    <a class="brand" href="#overview" aria-label="Korta overview">
+      <img src="brand/korta-icon.svg" alt="" width="32" height="32">
+      <span class="t-title">Korta</span>
+    </a>
+    <span class="badge badge-warning" role="status">Stellar testnet</span>
+    <button id="themeToggle" class="icon-btn" type="button" aria-label="Toggle dark mode">
+      <i data-lucide="moon" class="only-light"></i>
+      <i data-lucide="sun" class="only-dark"></i>
+    </button>
   </header>
 
   <main>
-    <section class="card wallet" aria-label="Supplier wallet">
-      <div>
-        <span class="label">Supplier wallet</span>
-        <div class="balance"><strong id="walletUsdc">—</strong> <span>USDC</span></div>
-        <span class="muted small">Spent today: <span id="spentToday">—</span></span>
+    <!-- ── Overview ─────────────────────────────────────────── -->
+    <section id="tab-overview" class="tab" data-tab="overview">
+      <div class="page-title">
+        <h1 class="t-headline" id="shopName">Your shop</h1>
+        <p class="t-body-sm muted" id="shopArea">Korta keeps your fast movers in stock.</p>
       </div>
-      <a id="walletLink" class="link" target="_blank" rel="noopener">View on Stellar ↗</a>
-    </section>
 
-    <section class="card" aria-labelledby="shelfTitle">
-      <div class="row-between">
-        <h2 id="shelfTitle">Shelf</h2>
-        <span id="riskCount" class="pill"></span>
+      <article id="introCard" class="card card-intro">
+        <p class="t-label-sm eyebrow">Meet Korta</p>
+        <p class="t-title">One AI agent that keeps your shelves stocked, and never spends without your say.</p>
+        <p class="t-body-sm muted">It checks stock against sales, buys live supplier quotes for a fifth of a cent each with <b>x402 on Stellar</b>, picks the best offer and asks you before paying. Tap <b>Check my stock</b> to watch it work.</p>
+      </article>
+
+      <article class="card wallet">
+        <div>
+          <p class="t-label-sm muted">Supplier wallet</p>
+          <p class="balance"><span id="walletUsdc" class="tabular">—</span> <span class="t-label muted">USDC</span></p>
+          <p class="t-body-sm muted">Spent today: <span id="spentToday" class="tabular">—</span></p>
+        </div>
+        <a id="walletLink" class="link t-label-sm" target="_blank" rel="noopener">View on Stellar <i data-lucide="external-link" class="i-sm"></i></a>
+      </article>
+
+      <div class="run">
+        <button id="run" class="btn btn-primary btn-block" type="button"><i data-lucide="scan-search"></i><span>Check my stock</span></button>
+        <div class="seg" role="group" aria-label="Brain">
+          <button type="button" data-brain="ai">AI</button>
+          <button type="button" data-brain="scripted">Scripted</button>
+        </div>
       </div>
-      <ul id="items" class="items"></ul>
-      <button id="toggleItems" class="link-button" type="button">Show all items</button>
+      <p id="brainNote" class="t-body-sm muted center"></p>
+
+      <article id="resultCard" class="card" hidden aria-live="polite">
+        <div class="row-between">
+          <span id="resultChip" class="chip chip-primary">Done</span>
+          <span id="resultMeta" class="t-label-sm muted tabular"></span>
+        </div>
+        <p id="summary" class="t-body-lg"></p>
+      </article>
+
+      <article id="activityCard" class="card" hidden>
+        <div class="row-between">
+          <h2 class="t-title">What Korta is doing</h2>
+          <span id="activityChip" class="chip chip-primary">Working</span>
+        </div>
+        <ol id="timeline" class="timeline" aria-live="polite"></ol>
+      </article>
+
+      <article class="card">
+        <div class="row-between">
+          <h2 class="t-title">Shelf</h2>
+          <span id="riskCount" class="chip chip-primary"></span>
+        </div>
+        <ul id="items" class="items"></ul>
+        <button id="toggleItems" class="link-btn t-label-sm" type="button">Show all items</button>
+      </article>
+
+      <article class="card">
+        <h2 class="t-title">Orders &amp; receipts</h2>
+        <ul id="ledger" class="ledger"></ul>
+      </article>
     </section>
 
-    <section class="actions">
-      <button id="run" class="primary" type="button">Check my stock</button>
-      <div class="seg" role="group" aria-label="Brain">
-        <button type="button" data-brain="ai">AI</button>
-        <button type="button" data-brain="scripted">Scripted</button>
+    <!-- ── Quotes ───────────────────────────────────────────── -->
+    <section id="tab-quotes" class="tab" data-tab="quotes" hidden>
+      <div class="page-title">
+        <h1 class="t-headline">Quotes</h1>
+        <p class="t-body-sm muted">What Korta paid to compare suppliers this run. Each quote costs $0.002 via x402, paid machine to machine.</p>
       </div>
+      <article id="demandCard" class="card" hidden>
+        <div class="row-between">
+          <h2 class="t-title">Demand outlook</h2>
+          <span id="demandChip" class="chip chip-warning"></span>
+        </div>
+        <p id="demandText" class="t-body-md"></p>
+        <a id="demandReceipt" class="receipt-pill" target="_blank" rel="noopener" hidden></a>
+      </article>
+      <div id="offers" class="stack"></div>
+      <article id="quotesEmpty" class="card empty">
+        <i data-lucide="store" class="i-lg muted"></i>
+        <p class="t-body-md muted">No quotes yet. Go to Overview and tap <b>Check my stock</b>: Korta buys a live quote from each supplier.</p>
+      </article>
     </section>
-    <p id="brainNote" class="muted small center"></p>
 
-    <section id="recCard" class="card rec" hidden aria-live="polite">
-      <span class="label">Korta recommends</span>
-      <h2 id="recSupplier"></h2>
-      <p id="recMeta" class="muted"></p>
-      <ul id="recLines" class="lines"></ul>
-      <div class="total-row">
-        <span>Total</span>
-        <strong id="recTotal"></strong>
+    <!-- ── Approve ──────────────────────────────────────────── -->
+    <section id="tab-approve" class="tab" data-tab="approve" hidden>
+      <div class="page-title">
+        <h1 class="t-headline">Approve order</h1>
+        <p class="t-body-sm muted">Silence means no. Nothing is signed until you tap Approve.</p>
       </div>
-      <p id="recAfter" class="muted small"></p>
-      <blockquote id="recReason"></blockquote>
-      <p id="recGap" class="warn small" hidden></p>
-      <div class="table-wrap">
-        <table class="compare">
-          <thead><tr><th>Offer</th><th>Delivery</th><th>Total</th><th></th></tr></thead>
-          <tbody id="recCompare"></tbody>
-        </table>
+
+      <article id="recCard" class="card" hidden>
+        <header class="row-between">
+          <span id="orderStatus" class="chip chip-primary">Waiting for you</span>
+          <span id="orderMeta" class="t-label-sm muted tabular">Quote locked</span>
+        </header>
+        <div class="stack-sm">
+          <p id="recTitle" class="t-title tabular"></p>
+          <ul id="recLines" class="lines t-body-md"></ul>
+          <p id="recReason" class="t-body-md muted"></p>
+          <p id="recGap" class="t-body-sm warn" hidden></p>
+        </div>
+        <ul id="recChecks" class="checks"></ul>
+        <details class="compare-wrap">
+          <summary class="t-label-sm">Compare all offers</summary>
+          <div id="recCompare" class="compare"></div>
+        </details>
+        <div id="settlement" class="settlement" hidden>
+          <span id="settlementTitle" class="t-label"></span>
+          <p id="settlementDesc" class="t-body-sm"></p>
+          <a id="settlementReceipt" class="receipt-pill" target="_blank" rel="noopener" hidden></a>
+        </div>
+        <footer id="orderActions" class="actions">
+          <button id="approve" class="btn btn-primary" type="button"><i data-lucide="check"></i><span>Approve</span></button>
+          <button id="decline" class="btn btn-neutral" type="button"><span>Decline</span></button>
+        </footer>
+      </article>
+
+      <article id="approveEmpty" class="card empty">
+        <i data-lucide="check-circle-2" class="i-lg muted"></i>
+        <p class="t-body-md muted">Nothing is waiting. Korta asks you here before it pays any supplier.</p>
+      </article>
+    </section>
+
+    <!-- ── Rules ────────────────────────────────────────────── -->
+    <section id="tab-rules" class="tab" data-tab="rules" hidden>
+      <div class="page-title">
+        <h1 class="t-headline">Your rules</h1>
+        <p class="t-body-sm muted">Enforced by the wallet in code. The AI never sees these numbers, so it can't be talked out of them.</p>
       </div>
-      <div id="recButtons" class="buttons">
-        <button id="approve" class="primary" type="button">Approve &amp; pay</button>
-        <button id="decline" class="secondary" type="button">Decline</button>
-      </div>
-      <p id="recStatus" class="muted small center"></p>
+      <article class="card">
+        <ul id="policy" class="checks checks-lg"></ul>
+      </article>
+      <article id="demoCard" class="card" hidden>
+        <h2 class="t-title">Demo controls</h2>
+        <p class="t-body-sm muted">Make the suppliers misbehave and watch the rules hold.</p>
+        <label class="field t-label-sm">Supplier scenario
+          <select id="scenario"></select>
+        </label>
+        <button id="reset" class="btn btn-neutral" type="button"><i data-lucide="rotate-ccw"></i><span>Reset demo shop</span></button>
+      </article>
+      <p class="t-body-sm muted center">Korta pays with <b>x402</b> on Stellar testnet. The AI proposes; your rules decide; Stellar settles.</p>
     </section>
-
-    <section id="resultCard" class="card result" hidden aria-live="polite">
-      <span class="label">Korta says</span>
-      <p id="summary"></p>
-      <p id="spendLine" class="muted small"></p>
-    </section>
-
-    <section id="timelineCard" class="card" hidden>
-      <h2>What Korta did</h2>
-      <ol id="timeline" class="timeline" aria-live="polite"></ol>
-    </section>
-
-    <section class="card">
-      <h2>Orders &amp; receipts</h2>
-      <ul id="ledger" class="ledger"></ul>
-    </section>
-
-    <details id="demoCard" class="card demo" hidden>
-      <summary>Demo controls &amp; owner rules</summary>
-      <label class="field">Supplier scenario
-        <select id="scenario"></select>
-      </label>
-      <button id="reset" class="secondary" type="button">Reset demo shop</button>
-      <h3>Your rules (enforced in code, never shown to the AI)</h3>
-      <ul id="policy" class="policy"></ul>
-    </details>
   </main>
 
-  <footer class="muted small center">Korta pays with <strong>x402</strong> on Stellar testnet. The AI proposes; your rules decide; Stellar settles.</footer>
-  <script src="app.js"></script>
+  <nav class="bottom" aria-label="App navigation">
+    <a href="#overview" data-nav="overview"><i data-lucide="layout-dashboard"></i><span class="t-label-sm">Overview</span></a>
+    <a href="#quotes" data-nav="quotes"><i data-lucide="store"></i><span class="t-label-sm">Quotes</span></a>
+    <a href="#approve" data-nav="approve"><span class="nav-icon"><i data-lucide="check-circle-2"></i><span id="approveDot" class="dot" hidden></span></span><span class="t-label-sm">Approve</span></a>
+    <a href="#rules" data-nav="rules"><i data-lucide="shield-check"></i><span class="t-label-sm">Rules</span></a>
+  </nav>
+</div>
+<script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+<script src="app.js"></script>
 </body>
 </html>

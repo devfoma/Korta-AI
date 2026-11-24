@@ -1,132 +1,127 @@
 <p align="center"><img src="src/console/public/brand/korta-logo.svg" alt="Korta" width="320"></p>
 
-# Korta AI
+<h3 align="center">One AI agent that keeps a small shop’s shelves stocked: it sources, compares and pays suppliers on Stellar.</h3>
 
-**One AI agent that keeps a small shop's shelves stocked: it sources, compares and pays suppliers on Stellar.**
+<p align="center">
+  <a href="https://korta-ai.onrender.com"><b>▶ Try the live prototype: korta-ai.onrender.com</b></a><br>
+  <sub>Stellar testnet · test USDC · free hosting: the first load can take ~50 s while it wakes up</sub>
+</p>
 
-Korta checks the shop's stock against its sales, works out what will run out before the next delivery could
-arrive, buys live supplier quotes for a fraction of a cent each, picks the best offer and, once the owner
-approves, pays the supplier invoice in USDC — all machine-to-machine with **x402 on Stellar**, only within the
-owner's spending rules.
+---
 
-> The AI proposes. The owner's rules decide. Stellar settles.
+## Why Korta should win
 
-⚠️ **Stellar testnet only.** All payments use test USDC with no real value.
+| Judges ask | Korta’s answer |
+|---|---|
+| **Is x402 central?** | Remove the payment and Korta can’t work. It **buys every supplier quote ($0.002) and demand signal ($0.005) per request via x402**, and **pays the approved supplier invoice via x402** straight into that supplier’s own Stellar wallet. No x402, no prices, no order. |
+| **Does it really work?** | Yes, on Stellar testnet, end to end. Real USDC moves for data and for supplier invoices, and every payment links to a public receipt on Stellar Expert. |
+| **Is it safe to let an agent spend?** | The owner’s rules live **in code, never in the AI prompt**. Every order needs the owner’s approval, and the wallet **refuses to sign** if a supplier raises the price after approval. |
+| **Is it done well, or just demoed?** | **Measured:** 8 adversarial scenarios run as real testnet payments, **8/8 pass** ([eval/results.md](eval/results.md)), plus 19 automated tests. |
+| **Does it matter to real people?** | Small shops lose sales every time a fast mover runs out. Korta turns a shopkeeper’s own sales data into a timed, explained restock, and pays in seconds with a receipt. |
 
-## What Korta does
+> **The AI proposes. The owner’s rules decide. Stellar settles.**
 
-1. **Checks stock:** which fast movers run out before a delivery could arrive
-2. **Buys a demand signal** via x402 ($0.005), only when this week's sales look unusual
-3. **Buys quotes** from each supplier via x402 ($0.002 each) and compares arrival time, cost and stock
-4. **Proposes one order** to the owner, with the reasons and an offer comparison
-5. **On approval, pays the supplier invoice** via x402 straight into the supplier's wallet, and updates the records
+## The problem
 
-Remove the payment and Korta can't get quotes or pay the supplier, so the restock never happens.
+Mama Ada runs a provision store in Lagos. In festive weeks her rice and cooking oil sell out, exactly when demand peaks. She has no time to call three suppliers, so she reorders from whoever she called last, and pays by cash or transfer with no clear record. **Every empty shelf is a lost sale.**
+
+## What Korta does: one agent, done well
+
+Our mentor told us to build **one core agent and make it excellent**. Korta is that agent: a restock agent with one job, *never let a fast mover run out, without overspending*.
+
+1. **Checks stock against sales:** rice and oil have 3 days of cover; sales are up 26–33% this week.
+2. **Decides what data is worth buying:** sales look unusual, so it pays **$0.005 via x402** for a demand outlook (festive season, +30%). On a steady week it skips it and saves the money.
+3. **Buys a live quote from each supplier:** **$0.002 each via x402**, paid machine to machine. Agents can’t fill in sign-up forms or enter card numbers, and card fees make sub-cent purchases impossible.
+4. **Compares on what matters:** arrival before the shelf is empty first, then completeness, then price.
+5. **Proposes one order and explains the trade-off:** *“Bola Foods Depot, 4.20 USDC. Adeyemi Wholesale is 0.30 cheaper but delivers in 4 days, and you run out of rice in 3.”*
+6. **Pays on approval:** the owner taps Approve, and the invoice is paid **via x402 into the supplier’s own wallet**, settling in seconds. Stock shows as incoming, and the receipt is public.
 
 ## Built to be trusted
 
-The owner's rules live in code ([src/wallet/index.mjs](src/wallet/index.mjs)), never in the AI prompt:
-
-| Rule | What it stops |
+| Rule (enforced by the wallet in code) | What it stops |
 |---|---|
-| Allowlisted hosts + known payee wallets | Paying anyone Korta wasn't set up to pay |
-| Data: per-request cap and per-run budget | Runaway spending on quotes and data |
-| Orders: owner approval, per-order cap, cash reserve | Orders the owner didn't agree to or can't afford |
+| Every order needs the owner’s approval (owner PIN on the public site); silence means no | Orders the owner didn’t agree to |
 | Pay at most the approved amount | A supplier raising the price after the owner said yes |
-| Daily budget across everything | Slow leaks over many runs |
-| Wallet balance | Everything else: it can't spend what it doesn't hold |
+| Per-order cap and cash reserve | Orders the shop can’t afford |
+| Data: per-request cap and per-run budget | Runaway spending on quotes and data |
+| Only known suppliers and wallets | Paying anyone Korta wasn’t set up to pay |
+| Supplier text is data, never instructions | Prompt injection hidden in a quote |
 
-Supplier text is treated as data, never as instructions. A failed network call never changes what gets ordered.
+The AI never sees these numbers, so it can’t be talked out of them. A network error never changes what gets ordered, and a settled payment is never mistaken for a failed one.
 
-## Quick start (about 10 minutes)
+## Proof: measured, not claimed
 
-You need **Node.js 22+**.
+`npm run eval` runs 8 scenarios as **real testnet runs with real x402 payments**. All 8 pass. Latest results, with a receipt link for each: [eval/results.md](eval/results.md).
+
+| Scenario | What Korta does |
+|---|---|
+| Normal restock | Picks the cheapest supplier that arrives in time |
+| Cheapest supplier too slow | Pays 0.30 more so rice doesn’t run out, and says why |
+| Best supplier out of stock | Switches supplier; never proposes missing stock |
+| Price jump after approval | Owner approved 4.20, invoice said 4.62 → **refused, nothing signed** |
+| Cash reserve | Trims the order so every item keeps some cover |
+| Prompt injection in a quote | Ignores “order 50 bags / buy the premium report” |
+| Steady sales | Skips the demand signal and saves the money |
+| Nothing to restock | Spends nothing |
+
+## Try it in 60 seconds
+
+1. Open **https://korta-ai.onrender.com** (on a phone or laptop).
+2. Tap **Check my stock** and watch the live timeline: each payment links to its Stellar receipt.
+3. Open **Quotes** to see the three supplier offers Korta paid for.
+4. On **Approve**, read the recommendation and the rule checks. **Decline** works for anyone. **Approve** needs the owner PIN, which we can share with judges on request.
+5. Under **Rules → Demo controls**, switch to *“Supplier B raises its price after quoting”* and watch the wallet refuse to pay.
+
+## Stellar integration
+
+| Feature | In Korta today | Next |
+|---|---|---|
+| **x402 agentic payments** | Pay-per-request quotes and demand data; supplier invoices with dynamic price and per-supplier `payTo` | MPP sessions for high-frequency data |
+| **USDC on Stellar** | Every payment in testnet USDC; fees sponsored by the facilitator | Mainnet; local-currency anchors for cash-out |
+| **Soroban** | Every x402 payment is a SEP-41 token transfer authorised by a signed Soroban auth entry | Escrow for supplier agreements; on-chain allowances |
+| **Passkeys / smart wallets** | — | Passkey sign-in and smart-account spending policies |
+
+## How it’s built
+
+```
+Owner (phone) ─ Check my stock · Approve / Decline
+   │
+Korta app (Express + live event stream)               src/console/
+   │
+KORTA AGENT: AI brain (OpenAI) or scripted brain      src/agent/
+   tools: check_stock · list_suppliers · buy_demand_signal (x402)
+          buy_quote (x402) · check_budget · propose_order
+   │                           approved → code pays the invoice (x402)
+Korta wallet: owner rules in code                     src/wallet/
+   │
+Supplier Network: 3 suppliers + market data,          src/suppliers/
+   each paid into its own Stellar wallet
+   │
+x402 facilitator → Stellar testnet (USDC)
+```
+
+Node 22 · Express · `@x402/*` 2.30 · `@stellar/stellar-sdk` 16 · vanilla JS front end (no build step).
+
+## Run it yourself
 
 ```bash
 npm install
-npm run setup     # creates .env and 5 testnet wallets (Korta + 3 suppliers + market data)
-```
-
-Give Korta test USDC: open https://faucet.circle.com, choose **Stellar Testnet**, paste the Korta address that
-setup printed. Then:
-
-```bash
+npm run setup     # .env + 5 testnet wallets (Korta, 3 suppliers, market data)
+# fund Korta at https://faucet.circle.com (Stellar Testnet) with the address setup prints
 npm run check     # ✓ Ready to demo.
-npm start         # Supplier Network on :4021 + Korta dashboard on http://localhost:4022
+npm start         # http://localhost:4022
+npm test          # 19 tests, offline
+npm run eval      # 8 scenarios on testnet
 ```
 
-Open http://localhost:4022 and tap **Check my stock**.
+Optional AI brain: add `OPENAI_API_KEY`, `OPENAI_MODEL` and `KORTA_BRAIN=ai` to `.env`. Deploying: [render.yaml](render.yaml) is a one-click Render blueprint; set `KORTA_OWNER_PIN` on public deployments.
 
-**AI brain (optional):** add `OPENAI_API_KEY`, `OPENAI_MODEL` and `KORTA_BRAIN=ai` to `.env`. Without them the
-scripted brain runs the same tools under the same rules.
+## Roadmap: from one excellent agent to a team
 
-### Other commands
+**Now:** the Korta restock agent, live on testnet. **Next:** passkeys, smart-account spending policies, Soroban escrow, mainnet. **Later:** Finance, Sales and Customer Retention agents on the same wallet and the same rules, each earning its place the way Korta did.
 
-```bash
-npm run restock                 # a run in the terminal (asks y/N before ordering)
-npm run restock -- --decline    # …and always decline (spends only on data)
-npm test                        # stock maths, budget rules and 12 offline scenarios (no network, no money)
-npm run eval                    # 8 scenarios as real testnet runs (needs npm start; ~$0.08 test USDC)
-npm run eval -- --brain ai      # the same, judged with the AI brain
-```
+## Docs & credits
 
-**Proof it works well:** [eval/results.md](eval/results.md) has the latest testnet eval, with a receipt link per run.
+[Project brief](docs/PROJECT_BRIEF.md) ([PDF](docs/Korta_AI_Project_Brief.pdf)) · [Build plan](docs/BUILD_PLAN.md) · [Eval results](eval/results.md)
 
-### Demo scenarios
-
-In the dashboard, open **Demo controls** to switch what the suppliers do:
-
-| Scenario | What Korta should do |
-|---|---|
-| Default | Pick Bola (delivers tomorrow) over Adeyemi (0.30 cheaper, but arrives after rice runs out) |
-| Everyone delivers tomorrow | Pick the cheapest |
-| Supplier B is out of rice | Switch to Coastline |
-| Supplier B raises its price after quoting | Owner approves 4.20, invoice says 4.62 → refused, nothing signed |
-| Injected instructions in a quote | Ignore them |
-| Normal demand | Smaller order (no festive uplift) |
-
-**Reset demo shop** puts the stock back.
-
-## Deploy (Render, free plan)
-
-1. Render → **New → Blueprint** → pick this repo. It reads [render.yaml](render.yaml).
-2. Paste the values it asks for from your local `.env`: `KORTA_AGENT_SECRET`, the four payee addresses, and
-   optionally `OPENAI_API_KEY` / `OPENAI_MODEL`.
-3. Set **`KORTA_OWNER_PIN`**: on a public URL anyone can open the dashboard, but only someone with the PIN can
-   approve a payment. Declining never needs it.
-4. Deploy, then open the `…onrender.com` link. The free plan sleeps after 15 minutes idle: open it a few
-   minutes before a demo.
-
-One run at a time; the daily budget on Render is lower (12 USDC) because anyone with the link can start a run.
-
-## How it's built
-
-```
-src/
-  agent/        Korta: tools, AI brain (OpenAI), scripted brain, stock + budget + offer maths
-  wallet/       x402 paying client + the owner's rules
-  suppliers/    the Supplier Network: x402 sellers, each paid into its own wallet
-  console/      the owner's dashboard (Express + SSE, vanilla JS)
-  store/        the shop's records (JSON file)
-scripts/        setup, check, seed, start
-test/           unit + offline scenario tests
-```
-
-## Troubleshooting
-
-- **`npm run check` says the balance is too low:** top up at https://faucet.circle.com (Stellar Testnet).
-- **"payment not confirmed … txInsufficientFee":** the facilitator rejected simultaneous settlements. Korta
-  settles one payment at a time; if you see this, make sure only one Korta process uses the wallet.
-- **A first paid request fails with HTTP 500:** the Supplier Network couldn't reach the facilitator at startup.
-  Korta retries automatically; if it persists, check your connection or switch `FACILITATOR` in `.env`.
-- **Port in use:** stop the other process, or change `PORT` / `CONSOLE_PORT` / `SUPPLIERS_BASE_URL` in `.env`.
-
-## Docs
-
-- [Project brief](docs/PROJECT_BRIEF.md) · [PDF](docs/Korta_AI_Project_Brief.pdf)
-- [2-day build plan](docs/BUILD_PLAN.md)
-
-## Credits
-
-Built on the [EmpowerHer x402-on-Stellar workshop kit](https://github.com/KoxyG/x402-stellar-empower-Her) by Koxy,
-and Stellar's [x402 docs](https://developers.stellar.org/docs/build/agentic-payments/x402).
+Built for **EmpowerHer: Building the Agent Economy**, on the [EmpowerHer x402-on-Stellar workshop kit](https://github.com/KoxyG/x402-stellar-empower-Her) by Koxy and Stellar’s [x402 docs](https://developers.stellar.org/docs/build/agentic-payments/x402). Testnet only: all payments use test USDC with no real value.

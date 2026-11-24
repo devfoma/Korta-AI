@@ -173,10 +173,15 @@ export function createWallet(emit = () => {}) {
         throw new Error(`payment not confirmed (HTTP ${res.status}${why ? `: ${why}` : ""})`);
       }
 
-      appendSpendLog({ date: today(), at: new Date().toISOString(), kind, why, url,
-                       units: String(quote.units), priceUsd: quote.priceUsd, tx: settlement.transaction });
       const entry = { kind, why, url, priceUsd: quote.priceUsd, paid: true, payTo: quote.payTo,
                       tx: settlement.transaction, link: explorer.tx(settlement.transaction) };
+      // The money has moved: a failed local write (e.g. a full disk) must not turn this into a "failure".
+      try {
+        appendSpendLog({ date: today(), at: new Date().toISOString(), kind, why, url,
+                         units: String(quote.units), priceUsd: quote.priceUsd, tx: settlement.transaction });
+      } catch (err) {
+        emit({ type: "notice", text: `Paid ${quote.priceUsd} USDC (settled on Stellar), but the local spend log couldn't be saved (${err.code || err.message}).` });
+      }
       payments.push(entry);
       emit({ type: "paid", ...entry, dataSpentUsd: toUsd(dataSpentUnits) });
       return { ok: true, data: await res.json(), payment: entry };

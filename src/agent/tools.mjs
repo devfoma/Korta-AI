@@ -99,6 +99,13 @@ export function createTools({ wallet, emit, approve }) {
     daysOfCover: state.report?.items.find((i) => i.id === l.itemId)?.daysOfCover ?? null,
   }));
 
+  // Bookkeeping after a payment has settled: a failed write (e.g. a full disk) is reported, never fatal,
+  // so a purchase that really happened is never treated as one that didn't.
+  function safely(write, what) {
+    try { return write(); }
+    catch (e) { emit({ type: "notice", text: `Paid on Stellar, but ${what} couldn't be saved locally (${e.code || e.message}).` }); return null; }
+  }
+
   async function directory() {
     if (state.suppliers) return state.suppliers;
     const r = await wallet.getFree("Supplier directory", "/directory");
@@ -126,7 +133,7 @@ export function createTools({ wallet, emit, approve }) {
       if (!CATEGORIES.includes(category)) return { error: `Unknown category. Use one of: ${CATEGORIES.join(", ")}.` };
       const r = await wallet.buyData(reason || `Demand outlook for ${category}`, `/market/demand?category=${encodeURIComponent(category)}&area=Lagos`);
       if (!r.ok) return { refused: true, reason: r.reason, note: "Do not retry. Continue with what you have." };
-      recordDataPurchase(r.payment);
+      safely(() => recordDataPurchase(r.payment), "the ledger entry");
       state.multipliers[category] = r.data.multiplier;
       emit({ type: "demand", url: r.payment.url, multiplier: r.data.multiplier, reason: r.data.reason });
       return { ...r.data, next: "Call check_stock again so the quantities include this outlook." };
@@ -140,7 +147,7 @@ export function createTools({ wallet, emit, approve }) {
       const query = list.map((i) => `${i.itemId}:${i.packs}`).join(",");
       const r = await wallet.buyData(reason || `Quote from ${supplier.name}`, `/suppliers/${supplierId}/quote?items=${query}`);
       if (!r.ok) return { refused: true, reason: r.reason, note: "Do not retry. Continue with what you have." };
-      recordDataPurchase(r.payment);
+      safely(() => recordDataPurchase(r.payment), "the ledger entry");
       const q = r.data;
       state.quotes.set(q.quoteId, q);
       emit({ type: "offer", url: r.payment.url, quote: q });
@@ -220,7 +227,7 @@ export function createTools({ wallet, emit, approve }) {
         emit({ type: "unpaid", reason: paid.reason, order });
         return { ...state.decision, note: "Nothing was paid. Tell the owner why." };
       }
-      const shop = recordPaidOrder({ supplier: { id: supplierId, name: quote.supplier }, order, lines: priced, tx: paid.payment.tx, link: paid.payment.link });
+      const shop = safely(() => recordPaidOrder({ supplier: { id: supplierId, name: quote.supplier }, order, lines: priced, tx: paid.payment.tx, link: paid.payment.link }), "the order record") ?? loadShop();
       state.decision = { approved: true, paid: true, orderId: order.orderId, totalUsd: order.totalUsd, deliveryDate: order.deliveryDate, tx: paid.payment.tx, link: paid.payment.link };
       emit({ type: "records", order: state.decision, items: stockReport(shop, state.multipliers).items });
       return state.decision;
