@@ -1,0 +1,1939 @@
+{
+ "shop": {
+  "name": "Mama Ada Provisions",
+  "area": "Surulere, Lagos",
+  "currency": "USDC (testnet, demo-scale prices)"
+ },
+ "asOf": "2026-11-24",
+ "restockRule": {
+  "typicalLeadDays": 2,
+  "safetyDays": 2,
+  "targetCoverDays": 10
+ },
+ "items": [
+  {
+   "id": "rice",
+   "name": "Rice",
+   "unit": "kg",
+   "pack": "50kg bag",
+   "packSize": 50,
+   "stock": 60,
+   "category": "staples",
+   "incoming": 0
+  },
+  {
+   "id": "oil",
+   "name": "Vegetable oil 1L",
+   "unit": "bottle",
+   "pack": "carton (12 × 1L)",
+   "packSize": 12,
+   "stock": 6,
+   "category": "staples",
+   "incoming": 0
+  },
+  {
+   "id": "sugar",
+   "name": "Sugar 1kg",
+   "unit": "pack",
+   "pack": "bag of 20",
+   "packSize": 20,
+   "stock": 70,
+   "category": "staples",
+   "incoming": 0
+  },
+  {
+   "id": "noodles",
+   "name": "Instant noodles",
+   "unit": "pack",
+   "pack": "carton of 40",
+   "packSize": 40,
+   "stock": 120,
+   "category": "staples",
+   "incoming": 0
+  },
+  {
+   "id": "tomato",
+   "name": "Tomato paste tin",
+   "unit": "tin",
+   "pack": "carton of 50",
+   "packSize": 50,
+   "stock": 90,
+   "category": "staples",
+   "incoming": 0
+  },
+  {
+   "id": "milk",
+   "name": "Milk powder 400g",
+   "unit": "tin",
+   "pack": "carton of 24",
+   "packSize": 24,
+   "stock": 40,
+   "category": "staples",
+   "incoming": 0
+  },
+  {
+   "id": "flour",
+   "name": "Flour",
+   "unit": "kg",
+   "pack": "50kg bag",
+   "packSize": 50,
+   "stock": 100,
+   "category": "staples",
+   "incoming": 0
+  },
+  {
+   "id": "beans",
+   "name": "Beans",
+   "unit": "kg",
+   "pack": "50kg bag",
+   "packSize": 50,
+   "stock": 80,
+   "category": "staples",
+   "incoming": 0
+  },
+  {
+   "id": "garri",
+   "name": "Garri",
+   "unit": "kg",
+   "pack": "50kg bag",
+   "packSize": 50,
+   "stock": 90,
+   "category": "staples",
+   "incoming": 0
+  },
+  {
+   "id": "semovita",
+   "name": "Semovita 1kg",
+   "unit": "pack",
+   "pack": "bale of 10",
+   "packSize": 10,
+   "stock": 45,
+   "category": "staples",
+   "incoming": 0
+  },
+  {
+   "id": "detergent",
+   "name": "Detergent 500g",
+   "unit": "pack",
+   "pack": "carton of 24",
+   "packSize": 24,
+   "stock": 50,
+   "category": "household",
+   "incoming": 0
+  },
+  {
+   "id": "water",
+   "name": "Bottled water 75cl",
+   "unit": "bottle",
+   "pack": "pack of 12",
+   "packSize": 12,
+   "stock": 100,
+   "category": "beverages",
+   "incoming": 0
+  }
+ ],
+ "sales": [
+  {
+   "date": "2026-10-25",
+   "itemId": "rice",
+   "qty": 13
+  },
+  {
+   "date": "2026-10-26",
+   "itemId": "rice",
+   "qty": 18
+  },
+  {
+   "date": "2026-10-27",
+   "itemId": "rice",
+   "qty": 18
+  },
+  {
+   "date": "2026-10-28",
+   "itemId": "rice",
+   "qty": 18
+  },
+  {
+   "date": "2026-10-29",
+   "itemId": "rice",
+   "qty": 18
+  },
+  {
+   "date": "2026-10-30",
+   "itemId": "rice",
+   "qty": 20
+  },
+  {
+   "date": "2026-10-31",
+   "itemId": "rice",
+   "qty": 24
+  },
+  {
+   "date": "2026-11-01",
+   "itemId": "rice",
+   "qty": 13
+  },
+  {
+   "date": "2026-11-02",
+   "itemId": "rice",
+   "qty": 18
+  },
+  {
+   "date": "2026-11-03",
+   "itemId": "rice",
+   "qty": 18
+  },
+  {
+   "date": "2026-11-04",
+   "itemId": "rice",
+   "qty": 18
+  },
+  {
+   "date": "2026-11-05",
+   "itemId": "rice",
+   "qty": 18
+  },
+  {
+   "date": "2026-11-06",
+   "itemId": "rice",
+   "qty": 20
+  },
+  {
+   "date": "2026-11-07",
+   "itemId": "rice",
+   "qty": 24
+  },
+  {
+   "date": "2026-11-08",
+   "itemId": "rice",
+   "qty": 13
+  },
+  {
+   "date": "2026-11-09",
+   "itemId": "rice",
+   "qty": 17
+  },
+  {
+   "date": "2026-11-10",
+   "itemId": "rice",
+   "qty": 17
+  },
+  {
+   "date": "2026-11-11",
+   "itemId": "rice",
+   "qty": 18
+  },
+  {
+   "date": "2026-11-12",
+   "itemId": "rice",
+   "qty": 18
+  },
+  {
+   "date": "2026-11-13",
+   "itemId": "rice",
+   "qty": 19
+  },
+  {
+   "date": "2026-11-14",
+   "itemId": "rice",
+   "qty": 23
+  },
+  {
+   "date": "2026-11-15",
+   "itemId": "rice",
+   "qty": 12
+  },
+  {
+   "date": "2026-11-16",
+   "itemId": "rice",
+   "qty": 17
+  },
+  {
+   "date": "2026-11-17",
+   "itemId": "rice",
+   "qty": 21
+  },
+  {
+   "date": "2026-11-18",
+   "itemId": "rice",
+   "qty": 22
+  },
+  {
+   "date": "2026-11-19",
+   "itemId": "rice",
+   "qty": 22
+  },
+  {
+   "date": "2026-11-20",
+   "itemId": "rice",
+   "qty": 25
+  },
+  {
+   "date": "2026-11-21",
+   "itemId": "rice",
+   "qty": 29
+  },
+  {
+   "date": "2026-11-22",
+   "itemId": "rice",
+   "qty": 16
+  },
+  {
+   "date": "2026-11-23",
+   "itemId": "rice",
+   "qty": 21
+  },
+  {
+   "date": "2026-10-25",
+   "itemId": "oil",
+   "qty": 1
+  },
+  {
+   "date": "2026-10-26",
+   "itemId": "oil",
+   "qty": 2
+  },
+  {
+   "date": "2026-10-27",
+   "itemId": "oil",
+   "qty": 2
+  },
+  {
+   "date": "2026-10-28",
+   "itemId": "oil",
+   "qty": 2
+  },
+  {
+   "date": "2026-10-29",
+   "itemId": "oil",
+   "qty": 2
+  },
+  {
+   "date": "2026-10-30",
+   "itemId": "oil",
+   "qty": 2
+  },
+  {
+   "date": "2026-10-31",
+   "itemId": "oil",
+   "qty": 2
+  },
+  {
+   "date": "2026-11-01",
+   "itemId": "oil",
+   "qty": 1
+  },
+  {
+   "date": "2026-11-02",
+   "itemId": "oil",
+   "qty": 2
+  },
+  {
+   "date": "2026-11-03",
+   "itemId": "oil",
+   "qty": 2
+  },
+  {
+   "date": "2026-11-04",
+   "itemId": "oil",
+   "qty": 2
+  },
+  {
+   "date": "2026-11-05",
+   "itemId": "oil",
+   "qty": 2
+  },
+  {
+   "date": "2026-11-06",
+   "itemId": "oil",
+   "qty": 2
+  },
+  {
+   "date": "2026-11-07",
+   "itemId": "oil",
+   "qty": 2
+  },
+  {
+   "date": "2026-11-08",
+   "itemId": "oil",
+   "qty": 1
+  },
+  {
+   "date": "2026-11-09",
+   "itemId": "oil",
+   "qty": 2
+  },
+  {
+   "date": "2026-11-10",
+   "itemId": "oil",
+   "qty": 2
+  },
+  {
+   "date": "2026-11-11",
+   "itemId": "oil",
+   "qty": 2
+  },
+  {
+   "date": "2026-11-12",
+   "itemId": "oil",
+   "qty": 2
+  },
+  {
+   "date": "2026-11-13",
+   "itemId": "oil",
+   "qty": 2
+  },
+  {
+   "date": "2026-11-14",
+   "itemId": "oil",
+   "qty": 2
+  },
+  {
+   "date": "2026-11-15",
+   "itemId": "oil",
+   "qty": 1
+  },
+  {
+   "date": "2026-11-16",
+   "itemId": "oil",
+   "qty": 1
+  },
+  {
+   "date": "2026-11-17",
+   "itemId": "oil",
+   "qty": 2
+  },
+  {
+   "date": "2026-11-18",
+   "itemId": "oil",
+   "qty": 2
+  },
+  {
+   "date": "2026-11-19",
+   "itemId": "oil",
+   "qty": 2
+  },
+  {
+   "date": "2026-11-20",
+   "itemId": "oil",
+   "qty": 3
+  },
+  {
+   "date": "2026-11-21",
+   "itemId": "oil",
+   "qty": 3
+  },
+  {
+   "date": "2026-11-22",
+   "itemId": "oil",
+   "qty": 2
+  },
+  {
+   "date": "2026-11-23",
+   "itemId": "oil",
+   "qty": 2
+  },
+  {
+   "date": "2026-10-25",
+   "itemId": "sugar",
+   "qty": 3
+  },
+  {
+   "date": "2026-10-26",
+   "itemId": "sugar",
+   "qty": 5
+  },
+  {
+   "date": "2026-10-27",
+   "itemId": "sugar",
+   "qty": 5
+  },
+  {
+   "date": "2026-10-28",
+   "itemId": "sugar",
+   "qty": 5
+  },
+  {
+   "date": "2026-10-29",
+   "itemId": "sugar",
+   "qty": 5
+  },
+  {
+   "date": "2026-10-30",
+   "itemId": "sugar",
+   "qty": 6
+  },
+  {
+   "date": "2026-10-31",
+   "itemId": "sugar",
+   "qty": 7
+  },
+  {
+   "date": "2026-11-01",
+   "itemId": "sugar",
+   "qty": 3
+  },
+  {
+   "date": "2026-11-02",
+   "itemId": "sugar",
+   "qty": 5
+  },
+  {
+   "date": "2026-11-03",
+   "itemId": "sugar",
+   "qty": 5
+  },
+  {
+   "date": "2026-11-04",
+   "itemId": "sugar",
+   "qty": 5
+  },
+  {
+   "date": "2026-11-05",
+   "itemId": "sugar",
+   "qty": 5
+  },
+  {
+   "date": "2026-11-06",
+   "itemId": "sugar",
+   "qty": 6
+  },
+  {
+   "date": "2026-11-07",
+   "itemId": "sugar",
+   "qty": 7
+  },
+  {
+   "date": "2026-11-08",
+   "itemId": "sugar",
+   "qty": 3
+  },
+  {
+   "date": "2026-11-09",
+   "itemId": "sugar",
+   "qty": 5
+  },
+  {
+   "date": "2026-11-10",
+   "itemId": "sugar",
+   "qty": 5
+  },
+  {
+   "date": "2026-11-11",
+   "itemId": "sugar",
+   "qty": 5
+  },
+  {
+   "date": "2026-11-12",
+   "itemId": "sugar",
+   "qty": 5
+  },
+  {
+   "date": "2026-11-13",
+   "itemId": "sugar",
+   "qty": 5
+  },
+  {
+   "date": "2026-11-14",
+   "itemId": "sugar",
+   "qty": 6
+  },
+  {
+   "date": "2026-11-15",
+   "itemId": "sugar",
+   "qty": 4
+  },
+  {
+   "date": "2026-11-16",
+   "itemId": "sugar",
+   "qty": 5
+  },
+  {
+   "date": "2026-11-17",
+   "itemId": "sugar",
+   "qty": 5
+  },
+  {
+   "date": "2026-11-18",
+   "itemId": "sugar",
+   "qty": 5
+  },
+  {
+   "date": "2026-11-19",
+   "itemId": "sugar",
+   "qty": 5
+  },
+  {
+   "date": "2026-11-20",
+   "itemId": "sugar",
+   "qty": 5
+  },
+  {
+   "date": "2026-11-21",
+   "itemId": "sugar",
+   "qty": 6
+  },
+  {
+   "date": "2026-11-22",
+   "itemId": "sugar",
+   "qty": 4
+  },
+  {
+   "date": "2026-11-23",
+   "itemId": "sugar",
+   "qty": 5
+  },
+  {
+   "date": "2026-10-25",
+   "itemId": "noodles",
+   "qty": 9
+  },
+  {
+   "date": "2026-10-26",
+   "itemId": "noodles",
+   "qty": 12
+  },
+  {
+   "date": "2026-10-27",
+   "itemId": "noodles",
+   "qty": 12
+  },
+  {
+   "date": "2026-10-28",
+   "itemId": "noodles",
+   "qty": 12
+  },
+  {
+   "date": "2026-10-29",
+   "itemId": "noodles",
+   "qty": 12
+  },
+  {
+   "date": "2026-10-30",
+   "itemId": "noodles",
+   "qty": 13
+  },
+  {
+   "date": "2026-10-31",
+   "itemId": "noodles",
+   "qty": 16
+  },
+  {
+   "date": "2026-11-01",
+   "itemId": "noodles",
+   "qty": 9
+  },
+  {
+   "date": "2026-11-02",
+   "itemId": "noodles",
+   "qty": 12
+  },
+  {
+   "date": "2026-11-03",
+   "itemId": "noodles",
+   "qty": 12
+  },
+  {
+   "date": "2026-11-04",
+   "itemId": "noodles",
+   "qty": 12
+  },
+  {
+   "date": "2026-11-05",
+   "itemId": "noodles",
+   "qty": 12
+  },
+  {
+   "date": "2026-11-06",
+   "itemId": "noodles",
+   "qty": 13
+  },
+  {
+   "date": "2026-11-07",
+   "itemId": "noodles",
+   "qty": 16
+  },
+  {
+   "date": "2026-11-08",
+   "itemId": "noodles",
+   "qty": 8
+  },
+  {
+   "date": "2026-11-09",
+   "itemId": "noodles",
+   "qty": 12
+  },
+  {
+   "date": "2026-11-10",
+   "itemId": "noodles",
+   "qty": 12
+  },
+  {
+   "date": "2026-11-11",
+   "itemId": "noodles",
+   "qty": 12
+  },
+  {
+   "date": "2026-11-12",
+   "itemId": "noodles",
+   "qty": 12
+  },
+  {
+   "date": "2026-11-13",
+   "itemId": "noodles",
+   "qty": 13
+  },
+  {
+   "date": "2026-11-14",
+   "itemId": "noodles",
+   "qty": 16
+  },
+  {
+   "date": "2026-11-15",
+   "itemId": "noodles",
+   "qty": 8
+  },
+  {
+   "date": "2026-11-16",
+   "itemId": "noodles",
+   "qty": 11
+  },
+  {
+   "date": "2026-11-17",
+   "itemId": "noodles",
+   "qty": 12
+  },
+  {
+   "date": "2026-11-18",
+   "itemId": "noodles",
+   "qty": 12
+  },
+  {
+   "date": "2026-11-19",
+   "itemId": "noodles",
+   "qty": 12
+  },
+  {
+   "date": "2026-11-20",
+   "itemId": "noodles",
+   "qty": 13
+  },
+  {
+   "date": "2026-11-21",
+   "itemId": "noodles",
+   "qty": 16
+  },
+  {
+   "date": "2026-11-22",
+   "itemId": "noodles",
+   "qty": 8
+  },
+  {
+   "date": "2026-11-23",
+   "itemId": "noodles",
+   "qty": 11
+  },
+  {
+   "date": "2026-10-25",
+   "itemId": "tomato",
+   "qty": 4
+  },
+  {
+   "date": "2026-10-26",
+   "itemId": "tomato",
+   "qty": 6
+  },
+  {
+   "date": "2026-10-27",
+   "itemId": "tomato",
+   "qty": 6
+  },
+  {
+   "date": "2026-10-28",
+   "itemId": "tomato",
+   "qty": 6
+  },
+  {
+   "date": "2026-10-29",
+   "itemId": "tomato",
+   "qty": 6
+  },
+  {
+   "date": "2026-10-30",
+   "itemId": "tomato",
+   "qty": 7
+  },
+  {
+   "date": "2026-10-31",
+   "itemId": "tomato",
+   "qty": 8
+  },
+  {
+   "date": "2026-11-01",
+   "itemId": "tomato",
+   "qty": 4
+  },
+  {
+   "date": "2026-11-02",
+   "itemId": "tomato",
+   "qty": 6
+  },
+  {
+   "date": "2026-11-03",
+   "itemId": "tomato",
+   "qty": 6
+  },
+  {
+   "date": "2026-11-04",
+   "itemId": "tomato",
+   "qty": 6
+  },
+  {
+   "date": "2026-11-05",
+   "itemId": "tomato",
+   "qty": 6
+  },
+  {
+   "date": "2026-11-06",
+   "itemId": "tomato",
+   "qty": 7
+  },
+  {
+   "date": "2026-11-07",
+   "itemId": "tomato",
+   "qty": 8
+  },
+  {
+   "date": "2026-11-08",
+   "itemId": "tomato",
+   "qty": 4
+  },
+  {
+   "date": "2026-11-09",
+   "itemId": "tomato",
+   "qty": 6
+  },
+  {
+   "date": "2026-11-10",
+   "itemId": "tomato",
+   "qty": 6
+  },
+  {
+   "date": "2026-11-11",
+   "itemId": "tomato",
+   "qty": 6
+  },
+  {
+   "date": "2026-11-12",
+   "itemId": "tomato",
+   "qty": 6
+  },
+  {
+   "date": "2026-11-13",
+   "itemId": "tomato",
+   "qty": 6
+  },
+  {
+   "date": "2026-11-14",
+   "itemId": "tomato",
+   "qty": 8
+  },
+  {
+   "date": "2026-11-15",
+   "itemId": "tomato",
+   "qty": 4
+  },
+  {
+   "date": "2026-11-16",
+   "itemId": "tomato",
+   "qty": 6
+  },
+  {
+   "date": "2026-11-17",
+   "itemId": "tomato",
+   "qty": 6
+  },
+  {
+   "date": "2026-11-18",
+   "itemId": "tomato",
+   "qty": 6
+  },
+  {
+   "date": "2026-11-19",
+   "itemId": "tomato",
+   "qty": 6
+  },
+  {
+   "date": "2026-11-20",
+   "itemId": "tomato",
+   "qty": 6
+  },
+  {
+   "date": "2026-11-21",
+   "itemId": "tomato",
+   "qty": 8
+  },
+  {
+   "date": "2026-11-22",
+   "itemId": "tomato",
+   "qty": 4
+  },
+  {
+   "date": "2026-11-23",
+   "itemId": "tomato",
+   "qty": 6
+  },
+  {
+   "date": "2026-10-25",
+   "itemId": "milk",
+   "qty": 2
+  },
+  {
+   "date": "2026-10-26",
+   "itemId": "milk",
+   "qty": 3
+  },
+  {
+   "date": "2026-10-27",
+   "itemId": "milk",
+   "qty": 3
+  },
+  {
+   "date": "2026-10-28",
+   "itemId": "milk",
+   "qty": 3
+  },
+  {
+   "date": "2026-10-29",
+   "itemId": "milk",
+   "qty": 3
+  },
+  {
+   "date": "2026-10-30",
+   "itemId": "milk",
+   "qty": 4
+  },
+  {
+   "date": "2026-10-31",
+   "itemId": "milk",
+   "qty": 4
+  },
+  {
+   "date": "2026-11-01",
+   "itemId": "milk",
+   "qty": 2
+  },
+  {
+   "date": "2026-11-02",
+   "itemId": "milk",
+   "qty": 3
+  },
+  {
+   "date": "2026-11-03",
+   "itemId": "milk",
+   "qty": 3
+  },
+  {
+   "date": "2026-11-04",
+   "itemId": "milk",
+   "qty": 3
+  },
+  {
+   "date": "2026-11-05",
+   "itemId": "milk",
+   "qty": 3
+  },
+  {
+   "date": "2026-11-06",
+   "itemId": "milk",
+   "qty": 3
+  },
+  {
+   "date": "2026-11-07",
+   "itemId": "milk",
+   "qty": 4
+  },
+  {
+   "date": "2026-11-08",
+   "itemId": "milk",
+   "qty": 2
+  },
+  {
+   "date": "2026-11-09",
+   "itemId": "milk",
+   "qty": 3
+  },
+  {
+   "date": "2026-11-10",
+   "itemId": "milk",
+   "qty": 3
+  },
+  {
+   "date": "2026-11-11",
+   "itemId": "milk",
+   "qty": 3
+  },
+  {
+   "date": "2026-11-12",
+   "itemId": "milk",
+   "qty": 3
+  },
+  {
+   "date": "2026-11-13",
+   "itemId": "milk",
+   "qty": 3
+  },
+  {
+   "date": "2026-11-14",
+   "itemId": "milk",
+   "qty": 4
+  },
+  {
+   "date": "2026-11-15",
+   "itemId": "milk",
+   "qty": 2
+  },
+  {
+   "date": "2026-11-16",
+   "itemId": "milk",
+   "qty": 3
+  },
+  {
+   "date": "2026-11-17",
+   "itemId": "milk",
+   "qty": 3
+  },
+  {
+   "date": "2026-11-18",
+   "itemId": "milk",
+   "qty": 3
+  },
+  {
+   "date": "2026-11-19",
+   "itemId": "milk",
+   "qty": 3
+  },
+  {
+   "date": "2026-11-20",
+   "itemId": "milk",
+   "qty": 3
+  },
+  {
+   "date": "2026-11-21",
+   "itemId": "milk",
+   "qty": 4
+  },
+  {
+   "date": "2026-11-22",
+   "itemId": "milk",
+   "qty": 2
+  },
+  {
+   "date": "2026-11-23",
+   "itemId": "milk",
+   "qty": 3
+  },
+  {
+   "date": "2026-10-25",
+   "itemId": "flour",
+   "qty": 4
+  },
+  {
+   "date": "2026-10-26",
+   "itemId": "flour",
+   "qty": 6
+  },
+  {
+   "date": "2026-10-27",
+   "itemId": "flour",
+   "qty": 6
+  },
+  {
+   "date": "2026-10-28",
+   "itemId": "flour",
+   "qty": 6
+  },
+  {
+   "date": "2026-10-29",
+   "itemId": "flour",
+   "qty": 6
+  },
+  {
+   "date": "2026-10-30",
+   "itemId": "flour",
+   "qty": 7
+  },
+  {
+   "date": "2026-10-31",
+   "itemId": "flour",
+   "qty": 8
+  },
+  {
+   "date": "2026-11-01",
+   "itemId": "flour",
+   "qty": 4
+  },
+  {
+   "date": "2026-11-02",
+   "itemId": "flour",
+   "qty": 6
+  },
+  {
+   "date": "2026-11-03",
+   "itemId": "flour",
+   "qty": 6
+  },
+  {
+   "date": "2026-11-04",
+   "itemId": "flour",
+   "qty": 6
+  },
+  {
+   "date": "2026-11-05",
+   "itemId": "flour",
+   "qty": 6
+  },
+  {
+   "date": "2026-11-06",
+   "itemId": "flour",
+   "qty": 7
+  },
+  {
+   "date": "2026-11-07",
+   "itemId": "flour",
+   "qty": 8
+  },
+  {
+   "date": "2026-11-08",
+   "itemId": "flour",
+   "qty": 4
+  },
+  {
+   "date": "2026-11-09",
+   "itemId": "flour",
+   "qty": 6
+  },
+  {
+   "date": "2026-11-10",
+   "itemId": "flour",
+   "qty": 6
+  },
+  {
+   "date": "2026-11-11",
+   "itemId": "flour",
+   "qty": 6
+  },
+  {
+   "date": "2026-11-12",
+   "itemId": "flour",
+   "qty": 6
+  },
+  {
+   "date": "2026-11-13",
+   "itemId": "flour",
+   "qty": 6
+  },
+  {
+   "date": "2026-11-14",
+   "itemId": "flour",
+   "qty": 8
+  },
+  {
+   "date": "2026-11-15",
+   "itemId": "flour",
+   "qty": 4
+  },
+  {
+   "date": "2026-11-16",
+   "itemId": "flour",
+   "qty": 6
+  },
+  {
+   "date": "2026-11-17",
+   "itemId": "flour",
+   "qty": 6
+  },
+  {
+   "date": "2026-11-18",
+   "itemId": "flour",
+   "qty": 6
+  },
+  {
+   "date": "2026-11-19",
+   "itemId": "flour",
+   "qty": 6
+  },
+  {
+   "date": "2026-11-20",
+   "itemId": "flour",
+   "qty": 6
+  },
+  {
+   "date": "2026-11-21",
+   "itemId": "flour",
+   "qty": 8
+  },
+  {
+   "date": "2026-11-22",
+   "itemId": "flour",
+   "qty": 4
+  },
+  {
+   "date": "2026-11-23",
+   "itemId": "flour",
+   "qty": 6
+  },
+  {
+   "date": "2026-10-25",
+   "itemId": "beans",
+   "qty": 5
+  },
+  {
+   "date": "2026-10-26",
+   "itemId": "beans",
+   "qty": 7
+  },
+  {
+   "date": "2026-10-27",
+   "itemId": "beans",
+   "qty": 7
+  },
+  {
+   "date": "2026-10-28",
+   "itemId": "beans",
+   "qty": 7
+  },
+  {
+   "date": "2026-10-29",
+   "itemId": "beans",
+   "qty": 7
+  },
+  {
+   "date": "2026-10-30",
+   "itemId": "beans",
+   "qty": 8
+  },
+  {
+   "date": "2026-10-31",
+   "itemId": "beans",
+   "qty": 9
+  },
+  {
+   "date": "2026-11-01",
+   "itemId": "beans",
+   "qty": 5
+  },
+  {
+   "date": "2026-11-02",
+   "itemId": "beans",
+   "qty": 7
+  },
+  {
+   "date": "2026-11-03",
+   "itemId": "beans",
+   "qty": 7
+  },
+  {
+   "date": "2026-11-04",
+   "itemId": "beans",
+   "qty": 7
+  },
+  {
+   "date": "2026-11-05",
+   "itemId": "beans",
+   "qty": 7
+  },
+  {
+   "date": "2026-11-06",
+   "itemId": "beans",
+   "qty": 8
+  },
+  {
+   "date": "2026-11-07",
+   "itemId": "beans",
+   "qty": 9
+  },
+  {
+   "date": "2026-11-08",
+   "itemId": "beans",
+   "qty": 5
+  },
+  {
+   "date": "2026-11-09",
+   "itemId": "beans",
+   "qty": 7
+  },
+  {
+   "date": "2026-11-10",
+   "itemId": "beans",
+   "qty": 7
+  },
+  {
+   "date": "2026-11-11",
+   "itemId": "beans",
+   "qty": 7
+  },
+  {
+   "date": "2026-11-12",
+   "itemId": "beans",
+   "qty": 7
+  },
+  {
+   "date": "2026-11-13",
+   "itemId": "beans",
+   "qty": 8
+  },
+  {
+   "date": "2026-11-14",
+   "itemId": "beans",
+   "qty": 9
+  },
+  {
+   "date": "2026-11-15",
+   "itemId": "beans",
+   "qty": 5
+  },
+  {
+   "date": "2026-11-16",
+   "itemId": "beans",
+   "qty": 6
+  },
+  {
+   "date": "2026-11-17",
+   "itemId": "beans",
+   "qty": 7
+  },
+  {
+   "date": "2026-11-18",
+   "itemId": "beans",
+   "qty": 7
+  },
+  {
+   "date": "2026-11-19",
+   "itemId": "beans",
+   "qty": 7
+  },
+  {
+   "date": "2026-11-20",
+   "itemId": "beans",
+   "qty": 8
+  },
+  {
+   "date": "2026-11-21",
+   "itemId": "beans",
+   "qty": 9
+  },
+  {
+   "date": "2026-11-22",
+   "itemId": "beans",
+   "qty": 5
+  },
+  {
+   "date": "2026-11-23",
+   "itemId": "beans",
+   "qty": 6
+  },
+  {
+   "date": "2026-10-25",
+   "itemId": "garri",
+   "qty": 6
+  },
+  {
+   "date": "2026-10-26",
+   "itemId": "garri",
+   "qty": 8
+  },
+  {
+   "date": "2026-10-27",
+   "itemId": "garri",
+   "qty": 8
+  },
+  {
+   "date": "2026-10-28",
+   "itemId": "garri",
+   "qty": 8
+  },
+  {
+   "date": "2026-10-29",
+   "itemId": "garri",
+   "qty": 8
+  },
+  {
+   "date": "2026-10-30",
+   "itemId": "garri",
+   "qty": 9
+  },
+  {
+   "date": "2026-10-31",
+   "itemId": "garri",
+   "qty": 10
+  },
+  {
+   "date": "2026-11-01",
+   "itemId": "garri",
+   "qty": 6
+  },
+  {
+   "date": "2026-11-02",
+   "itemId": "garri",
+   "qty": 8
+  },
+  {
+   "date": "2026-11-03",
+   "itemId": "garri",
+   "qty": 8
+  },
+  {
+   "date": "2026-11-04",
+   "itemId": "garri",
+   "qty": 8
+  },
+  {
+   "date": "2026-11-05",
+   "itemId": "garri",
+   "qty": 8
+  },
+  {
+   "date": "2026-11-06",
+   "itemId": "garri",
+   "qty": 9
+  },
+  {
+   "date": "2026-11-07",
+   "itemId": "garri",
+   "qty": 10
+  },
+  {
+   "date": "2026-11-08",
+   "itemId": "garri",
+   "qty": 6
+  },
+  {
+   "date": "2026-11-09",
+   "itemId": "garri",
+   "qty": 8
+  },
+  {
+   "date": "2026-11-10",
+   "itemId": "garri",
+   "qty": 8
+  },
+  {
+   "date": "2026-11-11",
+   "itemId": "garri",
+   "qty": 8
+  },
+  {
+   "date": "2026-11-12",
+   "itemId": "garri",
+   "qty": 8
+  },
+  {
+   "date": "2026-11-13",
+   "itemId": "garri",
+   "qty": 9
+  },
+  {
+   "date": "2026-11-14",
+   "itemId": "garri",
+   "qty": 10
+  },
+  {
+   "date": "2026-11-15",
+   "itemId": "garri",
+   "qty": 6
+  },
+  {
+   "date": "2026-11-16",
+   "itemId": "garri",
+   "qty": 7
+  },
+  {
+   "date": "2026-11-17",
+   "itemId": "garri",
+   "qty": 8
+  },
+  {
+   "date": "2026-11-18",
+   "itemId": "garri",
+   "qty": 8
+  },
+  {
+   "date": "2026-11-19",
+   "itemId": "garri",
+   "qty": 8
+  },
+  {
+   "date": "2026-11-20",
+   "itemId": "garri",
+   "qty": 9
+  },
+  {
+   "date": "2026-11-21",
+   "itemId": "garri",
+   "qty": 10
+  },
+  {
+   "date": "2026-11-22",
+   "itemId": "garri",
+   "qty": 6
+  },
+  {
+   "date": "2026-11-23",
+   "itemId": "garri",
+   "qty": 7
+  },
+  {
+   "date": "2026-10-25",
+   "itemId": "semovita",
+   "qty": 2
+  },
+  {
+   "date": "2026-10-26",
+   "itemId": "semovita",
+   "qty": 3
+  },
+  {
+   "date": "2026-10-27",
+   "itemId": "semovita",
+   "qty": 3
+  },
+  {
+   "date": "2026-10-28",
+   "itemId": "semovita",
+   "qty": 3
+  },
+  {
+   "date": "2026-10-29",
+   "itemId": "semovita",
+   "qty": 3
+  },
+  {
+   "date": "2026-10-30",
+   "itemId": "semovita",
+   "qty": 4
+  },
+  {
+   "date": "2026-10-31",
+   "itemId": "semovita",
+   "qty": 4
+  },
+  {
+   "date": "2026-11-01",
+   "itemId": "semovita",
+   "qty": 2
+  },
+  {
+   "date": "2026-11-02",
+   "itemId": "semovita",
+   "qty": 3
+  },
+  {
+   "date": "2026-11-03",
+   "itemId": "semovita",
+   "qty": 3
+  },
+  {
+   "date": "2026-11-04",
+   "itemId": "semovita",
+   "qty": 3
+  },
+  {
+   "date": "2026-11-05",
+   "itemId": "semovita",
+   "qty": 3
+  },
+  {
+   "date": "2026-11-06",
+   "itemId": "semovita",
+   "qty": 3
+  },
+  {
+   "date": "2026-11-07",
+   "itemId": "semovita",
+   "qty": 4
+  },
+  {
+   "date": "2026-11-08",
+   "itemId": "semovita",
+   "qty": 2
+  },
+  {
+   "date": "2026-11-09",
+   "itemId": "semovita",
+   "qty": 3
+  },
+  {
+   "date": "2026-11-10",
+   "itemId": "semovita",
+   "qty": 3
+  },
+  {
+   "date": "2026-11-11",
+   "itemId": "semovita",
+   "qty": 3
+  },
+  {
+   "date": "2026-11-12",
+   "itemId": "semovita",
+   "qty": 3
+  },
+  {
+   "date": "2026-11-13",
+   "itemId": "semovita",
+   "qty": 3
+  },
+  {
+   "date": "2026-11-14",
+   "itemId": "semovita",
+   "qty": 4
+  },
+  {
+   "date": "2026-11-15",
+   "itemId": "semovita",
+   "qty": 2
+  },
+  {
+   "date": "2026-11-16",
+   "itemId": "semovita",
+   "qty": 3
+  },
+  {
+   "date": "2026-11-17",
+   "itemId": "semovita",
+   "qty": 3
+  },
+  {
+   "date": "2026-11-18",
+   "itemId": "semovita",
+   "qty": 3
+  },
+  {
+   "date": "2026-11-19",
+   "itemId": "semovita",
+   "qty": 3
+  },
+  {
+   "date": "2026-11-20",
+   "itemId": "semovita",
+   "qty": 3
+  },
+  {
+   "date": "2026-11-21",
+   "itemId": "semovita",
+   "qty": 4
+  },
+  {
+   "date": "2026-11-22",
+   "itemId": "semovita",
+   "qty": 2
+  },
+  {
+   "date": "2026-11-23",
+   "itemId": "semovita",
+   "qty": 3
+  },
+  {
+   "date": "2026-10-25",
+   "itemId": "detergent",
+   "qty": 3
+  },
+  {
+   "date": "2026-10-26",
+   "itemId": "detergent",
+   "qty": 4
+  },
+  {
+   "date": "2026-10-27",
+   "itemId": "detergent",
+   "qty": 4
+  },
+  {
+   "date": "2026-10-28",
+   "itemId": "detergent",
+   "qty": 4
+  },
+  {
+   "date": "2026-10-29",
+   "itemId": "detergent",
+   "qty": 4
+  },
+  {
+   "date": "2026-10-30",
+   "itemId": "detergent",
+   "qty": 5
+  },
+  {
+   "date": "2026-10-31",
+   "itemId": "detergent",
+   "qty": 5
+  },
+  {
+   "date": "2026-11-01",
+   "itemId": "detergent",
+   "qty": 3
+  },
+  {
+   "date": "2026-11-02",
+   "itemId": "detergent",
+   "qty": 4
+  },
+  {
+   "date": "2026-11-03",
+   "itemId": "detergent",
+   "qty": 4
+  },
+  {
+   "date": "2026-11-04",
+   "itemId": "detergent",
+   "qty": 4
+  },
+  {
+   "date": "2026-11-05",
+   "itemId": "detergent",
+   "qty": 4
+  },
+  {
+   "date": "2026-11-06",
+   "itemId": "detergent",
+   "qty": 4
+  },
+  {
+   "date": "2026-11-07",
+   "itemId": "detergent",
+   "qty": 5
+  },
+  {
+   "date": "2026-11-08",
+   "itemId": "detergent",
+   "qty": 3
+  },
+  {
+   "date": "2026-11-09",
+   "itemId": "detergent",
+   "qty": 4
+  },
+  {
+   "date": "2026-11-10",
+   "itemId": "detergent",
+   "qty": 4
+  },
+  {
+   "date": "2026-11-11",
+   "itemId": "detergent",
+   "qty": 4
+  },
+  {
+   "date": "2026-11-12",
+   "itemId": "detergent",
+   "qty": 4
+  },
+  {
+   "date": "2026-11-13",
+   "itemId": "detergent",
+   "qty": 4
+  },
+  {
+   "date": "2026-11-14",
+   "itemId": "detergent",
+   "qty": 5
+  },
+  {
+   "date": "2026-11-15",
+   "itemId": "detergent",
+   "qty": 3
+  },
+  {
+   "date": "2026-11-16",
+   "itemId": "detergent",
+   "qty": 4
+  },
+  {
+   "date": "2026-11-17",
+   "itemId": "detergent",
+   "qty": 4
+  },
+  {
+   "date": "2026-11-18",
+   "itemId": "detergent",
+   "qty": 4
+  },
+  {
+   "date": "2026-11-19",
+   "itemId": "detergent",
+   "qty": 4
+  },
+  {
+   "date": "2026-11-20",
+   "itemId": "detergent",
+   "qty": 4
+  },
+  {
+   "date": "2026-11-21",
+   "itemId": "detergent",
+   "qty": 5
+  },
+  {
+   "date": "2026-11-22",
+   "itemId": "detergent",
+   "qty": 3
+  },
+  {
+   "date": "2026-11-23",
+   "itemId": "detergent",
+   "qty": 4
+  },
+  {
+   "date": "2026-10-25",
+   "itemId": "water",
+   "qty": 7
+  },
+  {
+   "date": "2026-10-26",
+   "itemId": "water",
+   "qty": 10
+  },
+  {
+   "date": "2026-10-27",
+   "itemId": "water",
+   "qty": 10
+  },
+  {
+   "date": "2026-10-28",
+   "itemId": "water",
+   "qty": 10
+  },
+  {
+   "date": "2026-10-29",
+   "itemId": "water",
+   "qty": 10
+  },
+  {
+   "date": "2026-10-30",
+   "itemId": "water",
+   "qty": 11
+  },
+  {
+   "date": "2026-10-31",
+   "itemId": "water",
+   "qty": 14
+  },
+  {
+   "date": "2026-11-01",
+   "itemId": "water",
+   "qty": 7
+  },
+  {
+   "date": "2026-11-02",
+   "itemId": "water",
+   "qty": 10
+  },
+  {
+   "date": "2026-11-03",
+   "itemId": "water",
+   "qty": 10
+  },
+  {
+   "date": "2026-11-04",
+   "itemId": "water",
+   "qty": 10
+  },
+  {
+   "date": "2026-11-05",
+   "itemId": "water",
+   "qty": 10
+  },
+  {
+   "date": "2026-11-06",
+   "itemId": "water",
+   "qty": 11
+  },
+  {
+   "date": "2026-11-07",
+   "itemId": "water",
+   "qty": 13
+  },
+  {
+   "date": "2026-11-08",
+   "itemId": "water",
+   "qty": 7
+  },
+  {
+   "date": "2026-11-09",
+   "itemId": "water",
+   "qty": 10
+  },
+  {
+   "date": "2026-11-10",
+   "itemId": "water",
+   "qty": 10
+  },
+  {
+   "date": "2026-11-11",
+   "itemId": "water",
+   "qty": 10
+  },
+  {
+   "date": "2026-11-12",
+   "itemId": "water",
+   "qty": 10
+  },
+  {
+   "date": "2026-11-13",
+   "itemId": "water",
+   "qty": 11
+  },
+  {
+   "date": "2026-11-14",
+   "itemId": "water",
+   "qty": 13
+  },
+  {
+   "date": "2026-11-15",
+   "itemId": "water",
+   "qty": 7
+  },
+  {
+   "date": "2026-11-16",
+   "itemId": "water",
+   "qty": 9
+  },
+  {
+   "date": "2026-11-17",
+   "itemId": "water",
+   "qty": 10
+  },
+  {
+   "date": "2026-11-18",
+   "itemId": "water",
+   "qty": 10
+  },
+  {
+   "date": "2026-11-19",
+   "itemId": "water",
+   "qty": 10
+  },
+  {
+   "date": "2026-11-20",
+   "itemId": "water",
+   "qty": 11
+  },
+  {
+   "date": "2026-11-21",
+   "itemId": "water",
+   "qty": 13
+  },
+  {
+   "date": "2026-11-22",
+   "itemId": "water",
+   "qty": 7
+  },
+  {
+   "date": "2026-11-23",
+   "itemId": "water",
+   "qty": 9
+  }
+ ],
+ "ledger": [],
+ "orders": []
+}

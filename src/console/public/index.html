@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Korta · Restock agent</title>
+  <meta name="description" content="Korta keeps a small shop's shelves stocked: it sources, compares and pays suppliers with x402 on Stellar testnet.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%230e6b57'/><text x='16' y='22' font-size='18' text-anchor='middle' fill='white' font-family='Arial' font-weight='700'>K</text></svg>">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="top">
+    <div class="brand">
+      <span class="logo" aria-hidden="true">K</span>
+      <div>
+        <h1>Korta</h1>
+        <p id="shopName" class="muted">Restock agent</p>
+      </div>
+    </div>
+    <span class="badge" title="All payments use test USDC with no real value">Stellar testnet · demo prices</span>
+  </header>
+
+  <main>
+    <section class="card wallet" aria-label="Supplier wallet">
+      <div>
+        <span class="label">Supplier wallet</span>
+        <div class="balance"><strong id="walletUsdc">—</strong> <span>USDC</span></div>
+        <span class="muted small">Spent today: <span id="spentToday">—</span></span>
+      </div>
+      <a id="walletLink" class="link" target="_blank" rel="noopener">View on Stellar ↗</a>
+    </section>
+
+    <section class="card" aria-labelledby="shelfTitle">
+      <div class="row-between">
+        <h2 id="shelfTitle">Shelf</h2>
+        <span id="riskCount" class="pill"></span>
+      </div>
+      <ul id="items" class="items"></ul>
+      <button id="toggleItems" class="link-button" type="button">Show all items</button>
+    </section>
+
+    <section class="actions">
+      <button id="run" class="primary" type="button">Check my stock</button>
+      <div class="seg" role="group" aria-label="Brain">
+        <button type="button" data-brain="ai">AI</button>
+        <button type="button" data-brain="scripted">Scripted</button>
+      </div>
+    </section>
+    <p id="brainNote" class="muted small center"></p>
+
+    <section id="recCard" class="card rec" hidden aria-live="polite">
+      <span class="label">Korta recommends</span>
+      <h2 id="recSupplier"></h2>
+      <p id="recMeta" class="muted"></p>
+      <ul id="recLines" class="lines"></ul>
+      <div class="total-row">
+        <span>Total</span>
+        <strong id="recTotal"></strong>
+      </div>
+      <p id="recAfter" class="muted small"></p>
+      <blockquote id="recReason"></blockquote>
+      <p id="recGap" class="warn small" hidden></p>
+      <div class="table-wrap">
+        <table class="compare">
+          <thead><tr><th>Offer</th><th>Delivery</th><th>Total</th><th></th></tr></thead>
+          <tbody id="recCompare"></tbody>
+        </table>
+      </div>
+      <div id="recButtons" class="buttons">
+        <button id="approve" class="primary" type="button">Approve &amp; pay</button>
+        <button id="decline" class="secondary" type="button">Decline</button>
+      </div>
+      <p id="recStatus" class="muted small center"></p>
+    </section>
+
+    <section id="resultCard" class="card result" hidden aria-live="polite">
+      <span class="label">Korta says</span>
+      <p id="summary"></p>
+      <p id="spendLine" class="muted small"></p>
+    </section>
+
+    <section id="timelineCard" class="card" hidden>
+      <h2>What Korta did</h2>
+      <ol id="timeline" class="timeline" aria-live="polite"></ol>
+    </section>
+
+    <section class="card">
+      <h2>Orders &amp; receipts</h2>
+      <ul id="ledger" class="ledger"></ul>
+    </section>
+
+    <details id="demoCard" class="card demo" hidden>
+      <summary>Demo controls &amp; owner rules</summary>
+      <label class="field">Supplier scenario
+        <select id="scenario"></select>
+      </label>
+      <button id="reset" class="secondary" type="button">Reset demo shop</button>
+      <h3>Your rules (enforced in code, never shown to the AI)</h3>
+      <ul id="policy" class="policy"></ul>
+    </details>
+  </main>
+
+  <footer class="muted small center">Korta pays with <strong>x402</strong> on Stellar testnet. The AI proposes; your rules decide; Stellar settles.</footer>
+  <script src="app.js"></script>
+</body>
+</html>

@@ -2,7 +2,8 @@ node_modules/
 .env
 .env.*
 !.env.example
-.agent-spend-log.json
+.korta-spend-log.json
 data/shop.json
 *.log
 .DS_Store
+.claude/
