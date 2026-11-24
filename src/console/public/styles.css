@@ -140,7 +140,7 @@ blockquote { margin: 10px 0; padding: 8px 12px; border-left: 3px solid var(--bra
 
 .demo summary { cursor: pointer; font-weight: 600; }
 .field { display: grid; gap: 4px; margin: 12px 0; font-size: 13px; color: var(--muted); }
-select { font: inherit; padding: 10px; border-radius: 10px; border: 1px solid var(--line); background: var(--card); color: var(--ink); }
+select { width: 100%; max-width: 100%; font: inherit; padding: 10px; border-radius: 10px; border: 1px solid var(--line); background: var(--card); color: var(--ink); }
 .policy { margin: 0; padding-left: 18px; font-size: 13px; color: var(--muted); }
 
 footer { padding: 8px 16px 28px; }
