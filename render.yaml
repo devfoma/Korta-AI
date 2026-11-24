@@ -1,0 +1,91 @@
+# Render blueprint: one web service runs the Supplier Network (internal port) and the Korta dashboard
+# (Render's public $PORT) via `npm start`. Deploy: Render → New → Blueprint → this repo.
+# Values marked `sync: false` are secrets or per-deployment: Render asks for them on first deploy.
+# Never set PORT here: Render sets it.
+services:
+  - type: web
+    name: korta-ai
+    runtime: node
+    plan: free
+    buildCommand: npm ci
+    startCommand: npm start
+    healthCheckPath: /api/config
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      # ── Network (testnet only) ──
+      - key: STELLAR_NETWORK
+        value: stellar:testnet
+      - key: STELLAR_NETWORK_PASSPHRASE
+        value: Test SDF Network ; September 2015
+      - key: STELLAR_HORIZON_URL
+        value: https://horizon-testnet.stellar.org
+      - key: STELLAR_RPC_URL
+        value: https://soroban-testnet.stellar.org
+      - key: STELLAR_EXPLORER_URL
+        value: https://stellar.expert/explorer/testnet
+      - key: USDC_ASSET_CODE
+        value: USDC
+      - key: USDC_ISSUER
+        value: GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5
+      - key: USDC_CONTRACT_ID
+        value: CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA
+      - key: USDC_DECIMALS
+        value: "7"
+      - key: USDC_FAUCET_URL
+        value: https://faucet.circle.com
+      # ── Wallets: copy from your local .env (secrets only for Korta's own wallet) ──
+      - key: KORTA_AGENT_SECRET
+        sync: false
+      - key: SUPPLIER_A_ADDRESS
+        sync: false
+      - key: SUPPLIER_B_ADDRESS
+        sync: false
+      - key: SUPPLIER_C_ADDRESS
+        sync: false
+      - key: MARKET_ADDRESS
+        sync: false
+      # ── Facilitator ──
+      - key: FACILITATOR
+        value: backup
+      - key: FACILITATOR_PRIMARY_URL
+        value: https://channels.openzeppelin.com/x402/testnet
+      - key: FACILITATOR_PRIMARY_KEY_URL
+        value: https://channels.openzeppelin.com/testnet/gen
+      - key: FACILITATOR_BACKUP_URL
+        value: https://x402.org/facilitator
+      # ── Brain ──
+      - key: KORTA_BRAIN
+        value: scripted
+      - key: KORTA_MAX_STEPS
+        value: "14"
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: OPENAI_MODEL
+        sync: false
+      # ── Owner policy ──
+      - key: KORTA_ALLOWED_HOSTS
+        value: localhost:4021
+      - key: KORTA_DATA_MAX_PER_REQUEST_USD
+        value: "0.01"
+      - key: KORTA_DATA_BUDGET_PER_RUN_USD
+        value: "0.05"
+      - key: KORTA_ORDER_MAX_USD
+        value: "8"
+      - key: KORTA_CASH_RESERVE_USD
+        value: "2"
+      # Lower than local: anyone with the link can start a run.
+      - key: KORTA_DAILY_BUDGET_USD
+        value: "12"
+      - key: KORTA_APPROVAL_TIMEOUT_SECONDS
+        value: "300"
+      - key: KORTA_SPEND_LOG_FILE
+        value: .korta-spend-log.json
+      # Only someone with this PIN can approve an order on the public URL.
+      - key: KORTA_OWNER_PIN
+        sync: false
+      # ── Servers ──
+      - key: SUPPLIERS_BASE_URL
+        value: http://localhost:4021
+      - key: KORTA_DEMO_CONTROLS
+        value: "true"

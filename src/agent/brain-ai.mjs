@@ -16,7 +16,7 @@ How to work:
    a. delivery arrives before the shelf is empty (deliveryDays < the item's daysOfCover);
    b. it has every at-risk item in stock;
    c. the lowest total cost.
-5. Call check_budget with the total. If it doesn't fit, reduce quantities (keep the fastest movers) and check again.
+5. Call check_budget with the total. If it doesn't fit, reduce quantities so every at-risk item still gets some cover (trim whichever item would end up with the most days of cover), and check again.
 6. Call propose_order once, with a reason for the owner that names the trade-off against the other offers. The owner approves or declines; if approved it is paid automatically.
 7. Finish with a short answer to the owner (at most 4 sentences): what was ordered (or why not), the cost, the delivery date, and what you spent on data. No tool calls in that final message.
 

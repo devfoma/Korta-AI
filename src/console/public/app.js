@@ -189,8 +189,18 @@ function startCountdown(seconds) {
 function stopCountdown() { if (countdown) clearInterval(countdown); countdown = null; }
 
 async function answer(approved) {
+  // On a public deployment only the owner can approve a payment. Declining never needs the PIN.
+  let pin;
+  if (approved && cfg.pinRequired) {
+    pin = window.prompt("Owner PIN to approve this payment");
+    if (pin === null) return;
+  }
   $("approve").disabled = $("decline").disabled = true;
-  await fetch("/api/approve", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ approved }) });
+  const res = await fetch("/api/approve", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ approved, pin }) });
+  if (res.status === 403) {
+    $("approve").disabled = $("decline").disabled = false;
+    $("recStatus").textContent = "Wrong owner PIN. Nothing was paid; try again or decline.";
+  }
 }
 
 // ── Run ────────────────────────────────────────────────────

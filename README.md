@@ -1,3 +1,5 @@
+<p align="center"><img src="src/console/public/brand/korta-logo.svg" alt="Korta" width="320"></p>
+
 # Korta AI
 
 **One AI agent that keeps a small shop's shelves stocked: it sources, compares and pays suppliers on Stellar.**
@@ -64,7 +66,11 @@ scripted brain runs the same tools under the same rules.
 npm run restock                 # a run in the terminal (asks y/N before ordering)
 npm run restock -- --decline    # …and always decline (spends only on data)
 npm test                        # stock maths, budget rules and 12 offline scenarios (no network, no money)
+npm run eval                    # 8 scenarios as real testnet runs (needs npm start; ~$0.08 test USDC)
+npm run eval -- --brain ai      # the same, judged with the AI brain
 ```
+
+**Proof it works well:** [eval/results.md](eval/results.md) has the latest testnet eval, with a receipt link per run.
 
 ### Demo scenarios
 
@@ -80,6 +86,18 @@ In the dashboard, open **Demo controls** to switch what the suppliers do:
 | Normal demand | Smaller order (no festive uplift) |
 
 **Reset demo shop** puts the stock back.
+
+## Deploy (Render, free plan)
+
+1. Render → **New → Blueprint** → pick this repo. It reads [render.yaml](render.yaml).
+2. Paste the values it asks for from your local `.env`: `KORTA_AGENT_SECRET`, the four payee addresses, and
+   optionally `OPENAI_API_KEY` / `OPENAI_MODEL`.
+3. Set **`KORTA_OWNER_PIN`**: on a public URL anyone can open the dashboard, but only someone with the PIN can
+   approve a payment. Declining never needs it.
+4. Deploy, then open the `…onrender.com` link. The free plan sleeps after 15 minutes idle: open it a few
+   minutes before a demo.
+
+One run at a time; the daily budget on Render is lower (12 USDC) because anyone with the link can start a run.
 
 ## How it's built
 

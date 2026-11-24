@@ -28,6 +28,7 @@ app.get("/api/config", (_req, res) => {
     aiAvailable: aiAvailable(),
     aiModel: config.ai.model || null,
     demoControls: config.demoControls,
+    pinRequired: Boolean(config.ownerPin),
   });
 });
 
@@ -71,9 +72,13 @@ let pendingApproval = null;
 
 app.post("/api/approve", (req, res) => {
   if (!pendingApproval) return res.status(409).json({ error: "Nothing is waiting for approval." });
+  const approved = req.body?.approved === true;
+  // With KORTA_OWNER_PIN set (public deployments), approving a payment needs the PIN. Declining never does.
+  if (approved && config.ownerPin && String(req.body?.pin ?? "") !== config.ownerPin)
+    return res.status(403).json({ error: "Wrong owner PIN." });
   const resolve = pendingApproval;
   pendingApproval = null;
-  resolve(req.body?.approved === true);
+  resolve(approved);
   res.json({ ok: true });
 });
 

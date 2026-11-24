@@ -56,6 +56,8 @@ export const config = Object.freeze({
   suppliersBaseUrl: required("SUPPLIERS_BASE_URL")?.replace(/\/+$/, ""),
   consolePort: Number(required("CONSOLE_PORT")),
   demoControls: optional("KORTA_DEMO_CONTROLS") === "true",
+  // Public deployments: approving an order needs this PIN. Empty = no PIN (local use).
+  ownerPin: optional("KORTA_OWNER_PIN"),
   // The owner's policy. Enforced by the wallet in code; the AI is never told these numbers.
   policy: Object.freeze({
     allowedHosts: (required("KORTA_ALLOWED_HOSTS") || "").split(",").map((h) => h.trim()).filter(Boolean),

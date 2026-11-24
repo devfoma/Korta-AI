@@ -1,3 +1,5 @@
+<img src="../src/console/public/brand/korta-logo.svg" alt="Korta" width="260">
+
 # Korta AI — Project Brief
 
 **One AI agent that keeps a small shop's shelves stocked: it sources, compares and pays suppliers on Stellar.**

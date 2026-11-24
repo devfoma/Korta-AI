@@ -129,6 +129,8 @@ test("approved: stock shows incoming and the order is recorded", async () => {
 test("cash reserve: with 5 USDC and a 2 USDC reserve, the order shrinks to fit", async () => {
   const { rec, decision } = await run({ balanceUsd: 5 });
   assert.ok(rec.totalUsd <= 3, `total ${rec.totalUsd} must leave the 2 USDC reserve`);
+  assert.deepEqual(lines(rec), { rice: 3, oil: 1 }, "trims evenly: 2.90 USDC, both items keep cover (rice 10.5 days, oil 9)");
+  assert.match(rec.reason, /Trimmed to keep your cash reserve/);
   assert.equal(decision.paid, true);
 });
 

@@ -186,7 +186,7 @@ export function createTools({ wallet, emit, approve }) {
       const totalUsd = cents(priced.reduce((s, l) => s + l.lineTotalUsd, 0));
       const balance = await wallet.balance();
       const budget = checkBudget({ totalUsd, walletUsdc: balance, policy: config.policy });
-      if (!budget.fits) return { error: budget.reason, shortfallUsd: budget.shortfallUsd, hint: "Reduce quantities (keep the fastest movers) and propose again." };
+      if (!budget.fits) return { error: budget.reason, shortfallUsd: budget.shortfallUsd, hint: "Reduce quantities so every at-risk item keeps some cover (trim the item that would have the most days of cover) and propose again." };
 
       const atRisk = state.report?.items.filter((i) => i.atRisk).map((i) => i.id) ?? [];
       const recommendation = {

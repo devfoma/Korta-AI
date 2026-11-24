@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="327" height="82" viewBox="0 0 327 82" role="img" aria-label="Korta primary logo">
+<title>Korta primary logo</title>
+<g transform="translate(-10 -7)"><g fill="#0E6B57">
+  <rect x="15" y="16" width="22" height="30" rx="4"/>
+  <rect x="15" y="50" width="22" height="30" rx="4"/>
+  <path d="M43 42 57 28 52 23Q50 21 53 20.4L78 15Q82 14 81 18L76 43Q75.4 46 73 44L68 39 59 48 80 72Q84 77 79 79Q78 80 75 80H65Q62 80 60 78L43 58Q41.5 56 41.5 53V47Q41.5 44 43 42Z"/>
+</g></g>
+<g transform="translate(95 5)"><g fill="none" stroke="#1C2321" stroke-width="9.4" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M7 7V64M46 7 7 44M24 28 48 64"/>
+  <circle cx="79.8" cy="45.5" r="19"/>
+  <path d="M115.7 64V27M115.7 42C115.7 31.5 122 25.5 132.2 26.4"/>
+  <path d="M154 15V51.5C154 62 160 67 169 63.3M145.5 27H169"/>
+  <circle cx="201" cy="45.5" r="19"/>
+  <path d="M220 27V64"/>
+</g></g>
+</svg>

@@ -12,7 +12,8 @@
     "restock": "node src/agent/cli.mjs",
     "console": "node src/console/app.mjs",
     "start": "node scripts/start.mjs",
-    "test": "node --test \"test/**/*.test.mjs\""
+    "test": "node --test \"test/**/*.test.mjs\"",
+    "eval": "node eval/run.mjs"
   },
   "engines": {
     "node": ">=22"

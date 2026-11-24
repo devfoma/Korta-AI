@@ -22,7 +22,13 @@ export async function runRestock({ task, emit = () => {}, approve = async () => 
   });
 
   const run = brain === "ai" ? runAiBrain : runScriptedBrain;
-  const { summary } = await run(task, toolbox, emit);
+  let { summary, aiFailed } = await run(task, toolbox, emit);
+  // The AI didn't respond before anything was bought: finish the job with the scripted brain
+  // (same tools, same rules). Once money has moved, stop instead, so nothing is bought twice.
+  if (aiFailed && wallet.payments.length === 0 && !toolbox.state.decision) {
+    emit({ type: "notice", text: "The AI model didn't respond, so Korta switched to the scripted brain (same tools, same rules)." });
+    ({ summary } = await runScriptedBrain(task, toolbox, emit));
+  }
 
   const result = {
     summary,

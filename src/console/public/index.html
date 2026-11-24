@@ -5,17 +5,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Korta · Restock agent</title>
   <meta name="description" content="Korta keeps a small shop's shelves stocked: it sources, compares and pays suppliers with x402 on Stellar testnet.">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%230e6b57'/><text x='16' y='22' font-size='18' text-anchor='middle' fill='white' font-family='Arial' font-weight='700'>K</text></svg>">
+  <link rel="icon" type="image/svg+xml" href="brand/korta-icon.svg">
+  <link rel="apple-touch-icon" href="brand/korta-icon.svg">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <header class="top">
     <div class="brand">
-      <span class="logo" aria-hidden="true">K</span>
-      <div>
-        <h1>Korta</h1>
-        <p id="shopName" class="muted">Restock agent</p>
-      </div>
+      <h1>
+        <picture>
+          <source srcset="brand/korta-logo-light.svg" media="(prefers-color-scheme: dark)">
+          <img class="wordmark" src="brand/korta-logo.svg" alt="Korta" width="327" height="82">
+        </picture>
+      </h1>
+      <p id="shopName" class="muted small">Restock agent</p>
     </div>
     <span class="badge" title="All payments use test USDC with no real value">Stellar testnet · demo prices</span>
   </header>

@@ -35,7 +35,10 @@ export async function runScriptedBrain(_task, toolbox, emit) {
   const [best, ...rest] = rankOffers(quotes, needs);
   let lines = needs.filter((n) => !best.missing.includes(n.itemId)).map(({ itemId, packs }) => ({ itemId, packs }));
 
-  // Fit the cash rules: trim the slowest mover one pack at a time.
+  // Fit the cash rules: trim one pack at a time from whichever item would end up with the MOST days of
+  // cover, so every at-risk item keeps a fair share instead of one being cut to almost nothing.
+  const itemOf = (id) => toolbox.state.report.items.find((i) => i.id === id);
+  const coverAfter = (l) => { const i = itemOf(l.itemId); return (i.stock + i.incoming + l.packs * i.packSize) / i.dailyRate; };
   const quote = toolbox.state.quotes.get(best.quoteId);
   const priceOf = (id) => quote.lines.find((l) => l.itemId === id).unitPriceUsd;
   const total = () => Math.round(lines.reduce((s, l) => s + l.packs * priceOf(l.itemId), 0) * 100) / 100;
@@ -47,10 +50,11 @@ export async function runScriptedBrain(_task, toolbox, emit) {
   };
   let budget = await checkBudget();
   if (budget.error) return { summary: `I couldn't check your wallet balance (${budget.error}), so I didn't propose an order. Try again in a minute.` };
+  let trimmed = false;
   while (!budget.fits && lines.some((l) => l.packs > 0)) {
-    const slowest = [...lines].filter((l) => l.packs > 0).sort((a, b) =>
-      (stock.atRisk.find((i) => i.itemId === b.itemId).daysOfCover) - (stock.atRisk.find((i) => i.itemId === a.itemId).daysOfCover))[0];
-    slowest.packs -= 1;
+    const mostCovered = [...lines].sort((a, b) => coverAfter(b) - coverAfter(a))[0];
+    mostCovered.packs -= 1;
+    trimmed = true;
     lines = lines.filter((l) => l.packs > 0);
     if (!lines.length) break;
     budget = await checkBudget();
@@ -62,7 +66,8 @@ export async function runScriptedBrain(_task, toolbox, emit) {
   const reason = [
     `${best.supplier} delivers in ${best.deliveryDays} day${best.deliveryDays === 1 ? "" : "s"}, before you run out in ${best.runsOutIn}.`,
     cheaper ? `${cheaper.supplier} is ${(best.totalUsd - cheaper.totalUsd).toFixed(2)} USDC cheaper but delivers in ${cheaper.deliveryDays} days.` : "It's the best complete offer.",
-  ].join(" ");
+    trimmed ? `Trimmed to keep your cash reserve: ${lines.map((l) => `${itemOf(l.itemId).name} ${Math.floor(coverAfter(l))} days`).join(", ")} of cover.` : "",
+  ].join(" ").trim();
 
   const result = await toolbox.run("propose_order", { supplierId: best.supplierId, quoteId: best.quoteId, lines, reason });
   if (result.error) return { summary: `I couldn't place the order: ${result.error}` };
