@@ -9,7 +9,7 @@ import { paymentMiddleware, x402ResourceServer } from "@x402/express";
 import { HTTPFacilitatorClient } from "@x402/core/server";
 import { ExactStellarScheme } from "@x402/stellar/exact/server";
 import { config } from "../config.mjs";
-import { suppliersFor, SCENARIOS, DEMAND } from "./catalog.mjs";
+import { suppliersFor, SCENARIOS, buildQuote, orderTotal, demandFor } from "./catalog.mjs";
 
 const { network, usdc, facilitator: fac, payees } = config;
 const QUOTE_PRICE_USD = 0.002;
@@ -22,7 +22,6 @@ const suppliers = () => suppliersFor(scenario);
 const quotes = new Map();   // quoteId → quote
 const orders = new Map();   // orderId → order
 const newId = (prefix) => `${prefix}_${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
-const cents = (n) => Math.round(n * 100) / 100;
 const price = (dollars) => ({ amount: String(Math.round(dollars * 10 ** usdc.decimals)), asset: usdc.contractId });
 
 // /suppliers/:id/...  and  /suppliers/:id/orders/:orderId/pay
@@ -153,9 +152,7 @@ app.post("/suppliers/:id/orders", (req, res) => {
   if (!lines.length) return res.status(400).json({ error: "No order lines." });
 
   // In the "price-jump" scenario the supplier quietly re-prices after quoting.
-  const jump = SCENARIOS[scenario]?.priceJump;
-  const factor = jump?.supplierId === supplier.id ? jump.factor : 1;
-  const totalUsd = cents(lines.reduce((sum, l) => sum + l.packs * l.unitPriceUsd, 0) * factor);
+  const totalUsd = orderTotal(lines, scenario, supplier.id);
 
   const orderId = newId("ord");
   const deliveryDate = new Date(Date.now() + supplier.deliveryDays * 86_400_000).toISOString().slice(0, 10);
@@ -174,20 +171,7 @@ app.get("/suppliers/:id/orders/:orderId", (req, res) => {
 // ── Paid routes (served only after x402 payment) ───────────
 app.get("/suppliers/:id/quote", (req, res) => {
   const supplier = suppliers()[req.params.id];
-  const lines = parseItems(req.query.items).map(({ itemId, packs }) => {
-    const unitPriceUsd = supplier.prices[itemId];
-    const available = supplier.stock[itemId] ?? 0;
-    const inStock = unitPriceUsd !== undefined && available >= packs;
-    return { itemId, packs, unitPriceUsd: unitPriceUsd ?? null, available, inStock,
-             lineTotalUsd: inStock ? cents(packs * unitPriceUsd) : 0,
-             ...(unitPriceUsd === undefined ? { reason: "not carried" } : !inStock ? { reason: `only ${available} in stock` } : {}) };
-  });
-  const quote = {
-    quoteId: newId("q"), supplierId: supplier.id, supplier: supplier.name, area: supplier.area,
-    deliveryDays: supplier.deliveryDays, expiresAt: Date.now() + QUOTE_TTL_MS,
-    lines, totalUsd: cents(lines.reduce((s, l) => s + l.lineTotalUsd, 0)),
-    allInStock: lines.every((l) => l.inStock), note: supplier.note, demo: true,
-  };
+  const quote = { quoteId: newId("q"), expiresAt: Date.now() + QUOTE_TTL_MS, ...buildQuote(supplier, parseItems(req.query.items)) };
   quotes.set(quote.quoteId, quote);
   res.json({ ...quote, validUntil: new Date(quote.expiresAt).toISOString() });
 });
@@ -201,8 +185,7 @@ app.post("/suppliers/:id/orders/:orderId/pay", (req, res) => {
 
 app.get("/market/demand", (req, res) => {
   const category = String(req.query.category || "staples").slice(0, 40);
-  const d = SCENARIOS[scenario]?.demandMultiplier === 1.0 ? DEMAND.stable : DEMAND.festive;
-  res.json({ category, area: String(req.query.area || "Lagos").slice(0, 40), ...d, demo: true });
+  res.json({ category, area: String(req.query.area || "Lagos").slice(0, 40), ...demandFor(scenario), demo: true });
 });
 
 // ── Demo controls (evals + live guardrail demo) ────────────

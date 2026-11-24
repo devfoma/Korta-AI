@@ -177,5 +177,5 @@ export function createWallet(emit = () => {}) {
     },
   });
 
-  return { getFree, postFree, buyData, payInvoice, payments, dataSpentUsd: () => toUsd(dataSpentUnits) };
+  return { getFree, postFree, buyData, payInvoice, balance: walletUsdc, payments, dataSpentUsd: () => toUsd(dataSpentUnits) };
 }

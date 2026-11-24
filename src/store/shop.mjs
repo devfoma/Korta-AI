@@ -6,7 +6,7 @@ import { fileURLToPath } from "node:url";
 
 const DATA = path.join(path.dirname(fileURLToPath(import.meta.url)), "../../data");
 const SEED = path.join(DATA, "shop.seed.json");
-const LIVE = path.join(DATA, "shop.json");
+const LIVE = process.env.KORTA_SHOP_FILE || path.join(DATA, "shop.json"); // tests point this at a temp file
 
 export function loadShop() {
   if (!fs.existsSync(LIVE)) resetShop();

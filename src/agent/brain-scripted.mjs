@@ -9,7 +9,7 @@ export async function runScriptedBrain(_task, toolbox, emit) {
   if (!stock.atRisk?.length) return { summary: "Everything has enough cover. Nothing to restock today, and nothing spent." };
 
   // Buy the demand signal only when sales look unusual.
-  if (/unusual/.test(stock.note)) {
+  if (stock.unusualDemand) {
     const categories = [...new Set(stock.atRisk.map((i) => i.category))];
     for (const category of categories) {
       say(emit, `Sales of ${category} are unusual this week, so a demand outlook is worth $0.005.`);

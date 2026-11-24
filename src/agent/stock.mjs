@@ -82,10 +82,11 @@ export function stockSummaryForAgent(report) {
       pack: i.pack,
       demandMultiplierApplied: i.demandMultiplier,
     })),
+    unusualDemand: unusual.length > 0,
     note: atRisk.length === 0
       ? "Nothing needs restocking."
       : unusual.length
         ? `Sales are unusual this week for: ${unusual.map((i) => `${i.name} (${i.trendPct >= 0 ? "+" : ""}${i.trendPct}%)`).join(", ")}.`
-        : "Sales are steady; no unusual demand this week.",
+        : "Sales are steady this week.",
   };
 }

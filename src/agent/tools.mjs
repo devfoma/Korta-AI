@@ -8,7 +8,7 @@ import { loadShop, recordPaidOrder, recordDataPurchase } from "../store/shop.mjs
 import { stockReport, stockSummaryForAgent } from "./stock.mjs";
 import { checkBudget } from "./budget.mjs";
 import { evaluateOffer, rankOffers } from "./choose.mjs";
-import { walletUsdc } from "../wallet/index.mjs";
+
 import { config } from "../config.mjs";
 
 const cents = (n) => Math.round(n * 100) / 100;
@@ -155,7 +155,7 @@ export function createTools({ wallet, emit, approve }) {
     async check_budget({ totalUsd }) {
       const total = Number(totalUsd);
       if (!(total > 0)) return { error: "totalUsd must be a positive number." };
-      return checkBudget({ totalUsd: total, walletUsdc: await walletUsdc(), policy: config.policy });
+      return checkBudget({ totalUsd: total, walletUsdc: await wallet.balance(), policy: config.policy });
     },
 
     async propose_order({ supplierId, quoteId, lines, reason }) {
@@ -183,7 +183,7 @@ export function createTools({ wallet, emit, approve }) {
         return { error: `${quote.supplier} delivers in ${quote.deliveryDays} days but stock runs out in ${chosen.runsOutIn}. ${betterOnTime.supplier} can deliver in time. Reconsider.` };
 
       const totalUsd = cents(priced.reduce((s, l) => s + l.lineTotalUsd, 0));
-      const balance = await walletUsdc();
+      const balance = await wallet.balance();
       const budget = checkBudget({ totalUsd, walletUsdc: balance, policy: config.policy });
       if (!budget.fits) return { error: budget.reason, shortfallUsd: budget.shortfallUsd, hint: "Reduce quantities (keep the fastest movers) and propose again." };
 

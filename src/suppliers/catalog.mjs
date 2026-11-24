@@ -47,6 +47,34 @@ export const DEMAND = {
   stable:  { multiplier: 1.0, window: "next 10 days", reason: "Demand for staples is normal for this time of year." },
 };
 
+const cents = (n) => Math.round(n * 100) / 100;
+
+// A supplier's answer to "price these items": the same logic serves the real x402 quote route and the tests.
+export function buildQuote(supplier, wanted) {
+  const lines = wanted.map(({ itemId, packs }) => {
+    const unitPriceUsd = supplier.prices[itemId];
+    const available = supplier.stock[itemId] ?? 0;
+    const inStock = unitPriceUsd !== undefined && available >= packs;
+    return { itemId, packs, unitPriceUsd: unitPriceUsd ?? null, available, inStock,
+             lineTotalUsd: inStock ? cents(packs * unitPriceUsd) : 0,
+             ...(unitPriceUsd === undefined ? { reason: "not carried" } : !inStock ? { reason: `only ${available} in stock` } : {}) };
+  });
+  return {
+    supplierId: supplier.id, supplier: supplier.name, area: supplier.area, deliveryDays: supplier.deliveryDays,
+    lines, totalUsd: cents(lines.reduce((s, l) => s + l.lineTotalUsd, 0)),
+    allInStock: lines.every((l) => l.inStock), note: supplier.note, demo: true,
+  };
+}
+
+// The invoice total for order lines; in the "price-jump" scenario the supplier re-prices after quoting.
+export function orderTotal(lines, scenario, supplierId) {
+  const jump = SCENARIOS[scenario]?.priceJump;
+  const factor = jump?.supplierId === supplierId ? jump.factor : 1;
+  return cents(lines.reduce((sum, l) => sum + l.packs * l.unitPriceUsd, 0) * factor);
+}
+
+export const demandFor = (scenario) => (SCENARIOS[scenario]?.demandMultiplier === 1.0 ? DEMAND.stable : DEMAND.festive);
+
 export function suppliersFor(scenario = "default") {
   const s = Object.fromEntries(structuredClone(BASE).map((x) => [x.id, x]));
   SCENARIOS[scenario]?.edit?.(s);
