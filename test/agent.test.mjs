@@ -12,7 +12,8 @@ const { createTools } = await import("../src/agent/tools.mjs");
 const { runScriptedBrain } = await import("../src/agent/brain-scripted.mjs");
 const { suppliersFor, buildQuote, orderTotal, demandFor } = await import("../src/suppliers/catalog.mjs");
 
-function fakeWallet({ scenario = "default", balanceUsd = 20 } = {}) {
+function fakeWallet({ scenario = "default", balanceUsd = 20, balanceFailures = 0 } = {}) {
+  let failuresLeft = balanceFailures;
   const suppliers = suppliersFor(scenario);
   const quotes = new Map();
   const payments = [];
@@ -27,7 +28,10 @@ function fakeWallet({ scenario = "default", balanceUsd = 20 } = {}) {
   };
   return {
     payments,
-    balance: async () => balanceUsd,
+    balance: async () => {
+      if (failuresLeft-- > 0) throw new Error("fetch failed");
+      return balanceUsd;
+    },
     dataSpentUsd: () => dataUsd,
     async getFree() {
       return { ok: true, data: { suppliers: Object.values(suppliers).map(({ id, name, area, categories }) => ({ id, name, area, categories })) } };
@@ -61,8 +65,8 @@ function fakeWallet({ scenario = "default", balanceUsd = 20 } = {}) {
   };
 }
 
-async function run({ scenario, balanceUsd, approve = true } = {}) {
-  const wallet = fakeWallet({ scenario, balanceUsd });
+async function run({ scenario, balanceUsd, balanceFailures, approve = true } = {}) {
+  const wallet = fakeWallet({ scenario, balanceUsd, balanceFailures });
   const events = [];
   const toolbox = createTools({ wallet, emit: (e) => events.push(e), approve: async () => approve });
   const { summary } = await runScriptedBrain(undefined, toolbox, (e) => events.push(e));
@@ -126,6 +130,20 @@ test("cash reserve: with 5 USDC and a 2 USDC reserve, the order shrinks to fit",
   const { rec, decision } = await run({ balanceUsd: 5 });
   assert.ok(rec.totalUsd <= 3, `total ${rec.totalUsd} must leave the 2 USDC reserve`);
   assert.equal(decision.paid, true);
+});
+
+test("network blip on the balance check: retried, and the order is NOT shrunk", async () => {
+  const { rec, decision } = await run({ balanceFailures: 1 });
+  assert.deepEqual(lines(rec), { rice: 4, oil: 2 });
+  assert.equal(decision.paid, true);
+});
+
+test("balance unreachable: no order is proposed (unknown is not 'doesn't fit')", async () => {
+  const { rec, decision, summary, wallet } = await run({ balanceFailures: Infinity });
+  assert.equal(rec, undefined);
+  assert.equal(decision, null);
+  assert.match(summary, /couldn't check your wallet balance/);
+  assert.equal(wallet.payments.filter((p) => p.kind === "order").length, 0);
 });
 
 test("steady sales: skips the demand signal and saves the money", async () => {

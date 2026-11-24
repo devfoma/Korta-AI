@@ -23,12 +23,13 @@ export async function runScriptedBrain(_task, toolbox, emit) {
   const items = stock.atRisk.map((i) => ({ itemId: i.itemId, packs: i.suggestedPacks }));
   const categories = new Set(stock.atRisk.map((i) => i.category));
   const { suppliers } = await toolbox.run("list_suppliers");
-  const quotes = [];
-  for (const s of suppliers.filter((s) => s.categories.some((c) => categories.has(c)))) {
-    const q = await toolbox.run("buy_quote", { supplierId: s.id, items, reason: `Compare ${s.name}'s price, stock and delivery time.` });
-    if (q.quoteId) quotes.push(toolbox.state.quotes.get(q.quoteId));
-  }
+  // Quotes are independent, so buy them in parallel (each paid call takes a few seconds to settle).
+  const candidates = suppliers.filter((s) => s.categories.some((c) => categories.has(c)));
+  const answers = await Promise.all(candidates.map((s) =>
+    toolbox.run("buy_quote", { supplierId: s.id, items, reason: `Compare ${s.name}'s price, stock and delivery time.` })));
+  const quotes = answers.filter((q) => q.quoteId).map((q) => toolbox.state.quotes.get(q.quoteId));
   if (!quotes.length) return { summary: "I couldn't get any supplier quotes, so nothing was ordered." };
+  if (quotes.length < candidates.length) say(emit, `I got ${quotes.length} of ${candidates.length} quotes; comparing what I have.`);
 
   const needs = stock.atRisk.map((i) => ({ itemId: i.itemId, packs: i.suggestedPacks, daysOfCover: i.daysOfCover }));
   const [best, ...rest] = rankOffers(quotes, needs);
@@ -38,14 +39,22 @@ export async function runScriptedBrain(_task, toolbox, emit) {
   const quote = toolbox.state.quotes.get(best.quoteId);
   const priceOf = (id) => quote.lines.find((l) => l.itemId === id).unitPriceUsd;
   const total = () => Math.round(lines.reduce((s, l) => s + l.packs * priceOf(l.itemId), 0) * 100) / 100;
-  let budget = await toolbox.run("check_budget", { totalUsd: total() });
+  // A failed check is "unknown", not "doesn't fit": never shrink an order because of a network error.
+  const checkBudget = async () => {
+    let b = await toolbox.run("check_budget", { totalUsd: total() });
+    if (b.error) b = await toolbox.run("check_budget", { totalUsd: total() });
+    return b;
+  };
+  let budget = await checkBudget();
+  if (budget.error) return { summary: `I couldn't check your wallet balance (${budget.error}), so I didn't propose an order. Try again in a minute.` };
   while (!budget.fits && lines.some((l) => l.packs > 0)) {
     const slowest = [...lines].filter((l) => l.packs > 0).sort((a, b) =>
       (stock.atRisk.find((i) => i.itemId === b.itemId).daysOfCover) - (stock.atRisk.find((i) => i.itemId === a.itemId).daysOfCover))[0];
     slowest.packs -= 1;
     lines = lines.filter((l) => l.packs > 0);
     if (!lines.length) break;
-    budget = await toolbox.run("check_budget", { totalUsd: total() });
+    budget = await checkBudget();
+    if (budget.error) return { summary: `I couldn't check your wallet balance (${budget.error}), so I didn't propose an order. Try again in a minute.` };
   }
   if (!lines.length) return { summary: "No order fits your cash rules right now, so nothing was ordered." };
 

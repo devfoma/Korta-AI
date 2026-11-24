@@ -69,6 +69,9 @@ function addStep(kind, icon, text, detail) {
   return li;
 }
 let lastStep = null;
+let pendingRows = [];
+const rowsByUrl = new Map();
+const rowOf = (e) => rowsByUrl.get(e.url) ?? lastStep;
 const setDetail = (li, ...content) => {
   if (!li) return;
   let d = li.querySelector(".detail");
@@ -84,26 +87,38 @@ function onEvent(e) {
     case "notice": addStep("error", "!", e.text); break;
     case "thinking": break;
     case "thought": addStep("thought", "…", e.text); break;
-    case "tool": lastStep = addStep("", "•", e.label); break;
+    case "tool":
+      lastStep = addStep("", "•", e.label);
+      // Paid tools can run in parallel: the wallet's next "step" event claims this row.
+      if (e.name === "buy_quote" || e.name === "buy_demand_signal") pendingRows.push(lastStep);
+      break;
     case "stock": {
       const risk = e.report.items.filter((i) => i.atRisk);
       setDetail(lastStep, risk.length ? `${risk.map((i) => `${i.name}: ${i.daysOfCover} days left`).join(" · ")}. ${e.note}` : e.note);
       lastItems = e.report.items; renderItems();
       break;
     }
-    case "quote": setDetail(lastStep, `Costs ${money(e.priceUsd)} · checking your rules…`); break;
-    case "paying": setDetail(lastStep, `Paying ${money(e.priceUsd)} via x402…`); break;
-    case "paid":
-      if (e.kind === "order") lastStep = addStep("paid", "✓", `Paid the supplier ${usdc(e.priceUsd)} USDC`, receipt(e.link));
-      else { lastStep?.classList.add("paid"); setDetail(lastStep, `Paid ${money(e.priceUsd)} · `, receipt(e.link)); }
+    case "step":
+      rowsByUrl.set(e.url, e.kind === "data" ? (pendingRows.shift() ?? addStep("", "•", e.why)) : addStep("", "•", "Paying the supplier invoice via x402"));
       break;
+    case "quote": setDetail(rowOf(e), `Costs ${money(e.priceUsd)} · checking your rules…`); break;
+    case "paying": setDetail(rowOf(e), `Paying ${money(e.priceUsd)} via x402…`); break;
+    case "paid": {
+      const row = rowOf(e);
+      row?.classList.add("paid");
+      setDetail(row, e.kind === "order" ? `Paid ${usdc(e.priceUsd)} USDC into the supplier's wallet · ` : `Paid ${money(e.priceUsd)} · `, receipt(e.link));
+      break;
+    }
     case "refused":
-      lastStep?.classList.add("refused");
-      setDetail(lastStep, `Refused by your rules (${e.rule}): ${e.reason}. Nothing was signed.`);
+      rowOf(e)?.classList.add("refused");
+      setDetail(rowOf(e), `Refused by your rules (${e.rule}): ${e.reason}. Nothing was signed.`);
       break;
     case "offer":
-      lastStep?.querySelector(".detail")?.append(
+      rowOf(e)?.querySelector(".detail")?.append(
         ` · offer: ${usdc(e.quote.totalUsd)} USDC, delivers in ${e.quote.deliveryDays} day${e.quote.deliveryDays === 1 ? "" : "s"}${e.quote.allInStock ? "" : ", missing items"}`);
+      break;
+    case "demand":
+      rowOf(e)?.querySelector(".detail")?.append(` · outlook ×${e.multiplier}: ${e.reason}`);
       break;
     case "recommendation": showRecommendation(e.recommendation); break;
     case "decision":
@@ -120,7 +135,12 @@ function onEvent(e) {
       $("recStatus").replaceChildren(`Paid ${usdc(e.order.totalUsd)} USDC · delivery ${e.order.deliveryDate} · `, receipt(e.order.link));
       lastItems = e.items; renderItems();
       break;
-    case "error": addStep("error", "!", e.message, e.hint); break;
+    case "error": {
+      const row = rowsByUrl.get(e.url);
+      if (row) { row.classList.add("error"); setDetail(row, `${e.message}${e.hint ? `. ${e.hint}` : ""}`); }
+      else addStep("error", "!", e.message, e.hint);
+      break;
+    }
     case "fatal": addStep("error", "!", `Stopped: ${e.message}`); finish(); break;
     case "done":
       $("resultCard").hidden = false;
@@ -182,6 +202,8 @@ function start() {
   $("recCard").hidden = true;
   $("resultCard").hidden = true;
   lastStep = null;
+  pendingRows = [];
+  rowsByUrl.clear();
   source = new EventSource(`/api/run?brain=${brain}`);
   source.onmessage = (m) => onEvent(JSON.parse(m.data));
   source.onerror = () => { if (source) { addStep("error", "!", "Lost connection to Korta."); finish(); } };

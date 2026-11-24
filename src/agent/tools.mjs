@@ -128,6 +128,7 @@ export function createTools({ wallet, emit, approve }) {
       if (!r.ok) return { refused: true, reason: r.reason, note: "Do not retry. Continue with what you have." };
       recordDataPurchase(r.payment);
       state.multipliers[category] = r.data.multiplier;
+      emit({ type: "demand", url: r.payment.url, multiplier: r.data.multiplier, reason: r.data.reason });
       return { ...r.data, next: "Call check_stock again so the quantities include this outlook." };
     },
 
@@ -142,7 +143,7 @@ export function createTools({ wallet, emit, approve }) {
       recordDataPurchase(r.payment);
       const q = r.data;
       state.quotes.set(q.quoteId, q);
-      emit({ type: "offer", quote: q });
+      emit({ type: "offer", url: r.payment.url, quote: q });
       return {
         quoteId: q.quoteId, supplierId: q.supplierId, supplier: q.supplier, deliveryDays: q.deliveryDays,
         lines: q.lines.map(({ itemId, packs, unitPriceUsd, available, inStock, reason: why }) => ({ itemId, packs, unitPriceUsd, available, inStock, ...(why ? { note: why } : {}) })),

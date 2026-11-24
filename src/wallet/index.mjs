@@ -8,6 +8,9 @@
 //     · ≤ per-order cap · wallet keeps the cash reserve · ≤ daily budget
 //   Layer 2: the x402 client signs at most the amount we approved.
 //   Layer 3: the wallet's USDC balance is the hard limit.
+//
+// Retries: only where they can't cause a double payment: the free first request, balance lookups,
+// and payment attempts that failed BEFORE anything was signed or sent.
 // Adapted from the EmpowerHer x402 workshop kit (src/agent.mjs).
 import fs from "node:fs";
 import { Keypair, Horizon } from "@stellar/stellar-sdk";
@@ -29,9 +32,22 @@ try {
 
 export const walletAddress = () => agentPub;
 
+// ── Retries for network blips ──────────────────────────────
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+const isNetworkError = (e) => /fetch failed|ETIMEDOUT|ECONNRESET|ECONNREFUSED|EAI_AGAIN|socket hang up|network|timeout/i.test(`${e?.message} ${e?.cause?.code ?? ""} ${e?.cause?.message ?? ""}`);
+async function retry(fn, { tries = 3, when = isNetworkError } = {}) {
+  for (let attempt = 1; ; attempt++) {
+    try { return await fn(); }
+    catch (e) {
+      if (attempt >= tries || !when(e)) throw e;
+      await sleep(800 * attempt);
+    }
+  }
+}
+
 export async function walletUsdc() {
   if (!agentPub) return 0;
-  const acc = await horizon.loadAccount(agentPub);
+  const acc = await retry(() => horizon.loadAccount(agentPub));
   const bal = acc.balances.find((b) => b.asset_code === usdc.code && b.asset_issuer === usdc.issuer);
   return Number(bal?.balance ?? 0);
 }
@@ -42,6 +58,16 @@ const readSpendLog = () => { try { return JSON.parse(fs.readFileSync(policy.spen
 const spentTodayUnits = () => readSpendLog().filter((e) => e.date === today()).reduce((sum, e) => sum + BigInt(e.units), 0n);
 export const spentTodayUsd = () => toUsd(spentTodayUnits());
 const appendSpendLog = (entry) => fs.writeFileSync(policy.spendLogFile, JSON.stringify([...readSpendLog(), entry], null, 2));
+let inFlightUnits = 0n; // payments decided but not yet settled, so parallel purchases can't overshoot the daily budget
+
+// One settlement at a time per wallet: the facilitator rejects simultaneous submissions from the same
+// payer (txInsufficientFee). Asking for prices and checking the rules still run in parallel.
+let settleQueue = Promise.resolve();
+function oneAtATime(fn) {
+  const run = settleQueue.then(fn, fn);
+  settleQueue = run.catch(() => {});
+  return run;
+}
 
 // Read the price out of a 402 WITHOUT paying.
 function readQuote(res) {
@@ -65,11 +91,11 @@ function payingFetch(approvedUnits, capUsd) {
 const fail = (rule, reason) => ({ ok: false, rule, reason });
 const pass = (reason) => ({ ok: true, rule: "within limits", reason });
 
-function commonChecks(url, quote, todayUnits) {
+function commonChecks(url, quote) {
   const host = new URL(url).host;
   if (!policy.allowedHosts.includes(host)) return fail("allowlist", `${host} is not on the allowlist`);
   if (!knownPayees.has(quote.payTo)) return fail("unknown payee", "the payment would go to a wallet that isn't a known supplier");
-  if (todayUnits + quote.units > toUnits(policy.dailyBudgetUsd)) return fail("daily budget", "would go over today's spending limit");
+  if (spentTodayUnits() + inFlightUnits + quote.units > toUnits(policy.dailyBudgetUsd)) return fail("daily budget", "would go over today's spending limit");
   return null;
 }
 
@@ -77,35 +103,48 @@ function commonChecks(url, quote, todayUnits) {
 // emit(event) reports every step so the terminal and the dashboard can show it live.
 export function createWallet(emit = () => {}) {
   const payments = [];
-  let dataSpentUnits = 0n;
+  let dataSpentUnits = 0n; // includes data purchases in flight (reserved at decision time)
 
-  async function getFree(why, path) {
+  async function getFree(_why, path) {
     const url = `${config.suppliersBaseUrl}${path}`;
-    const res = await fetch(url);
+    const res = await retry(() => fetch(url));
     if (res.status === 402) return { ok: false, reason: "this is a paid service; use a paid tool" };
     if (!res.ok) return { ok: false, reason: `service error (HTTP ${res.status})` };
     return { ok: true, data: await res.json() };
   }
 
   async function postFree(path, body) {
-    const res = await fetch(`${config.suppliersBaseUrl}${path}`, {
+    const res = await retry(() => fetch(`${config.suppliersBaseUrl}${path}`, {
       method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body),
-    });
+    }));
     const data = await res.json().catch(() => ({}));
     return res.ok ? { ok: true, data } : { ok: false, reason: data.error || `HTTP ${res.status}` };
   }
 
+  // The first, unpaid request. Safe to retry: no money is involved yet. A 5xx is retried too.
+  const ask = (url, method) => retry(async () => {
+    const res = await fetch(url, { method });
+    if (res.status >= 500) { const err = new Error(`service error (HTTP ${res.status})`); err.retryable = true; throw err; }
+    return res;
+  }, { when: (e) => e.retryable || isNetworkError(e) });
+
   // Shared by both kinds of purchase: ask, read the price, apply `decide`, then pay or refuse.
-  async function purchase({ kind, why, path, method = "GET", decide, capUsd }) {
+  // decide(quote) must be synchronous, so a check and its reservation can't interleave with a parallel purchase.
+  async function purchase({ kind, why, path, method = "GET", decide, release = () => {}, capUsd }) {
     const url = `${config.suppliersBaseUrl}${path}`;
     emit({ type: "step", kind, why, url });
     if (!signer) return refuse({ kind, why, url, priceUsd: 0 }, fail("wallet", "Korta's wallet key is missing: run npm run setup"));
 
-    const first = await fetch(url, { method });
+    let first;
+    try { first = await ask(url, method); }
+    catch (e) {
+      emit({ type: "error", url, message: e.message, hint: "Nothing was paid." });
+      return { ok: false, reason: e.message };
+    }
     if (first.status !== 402) {
       const data = await first.json().catch(() => ({}));
       if (!first.ok) {
-        emit({ type: "error", url, message: data.error || `HTTP ${first.status}` });
+        emit({ type: "error", url, message: data.error || `HTTP ${first.status}`, hint: "Nothing was paid." });
         return { ok: false, reason: data.error || `service error (HTTP ${first.status})` };
       }
       return { ok: true, data };
@@ -115,17 +154,25 @@ export function createWallet(emit = () => {}) {
     if (!quote) return refuse({ kind, why, url, priceUsd: 0 }, fail("asset", "no offer in USDC on our network"));
     emit({ type: "quote", kind, url, priceUsd: quote.priceUsd, description: quote.description });
 
-    const decision = commonChecks(url, quote, spentTodayUnits()) ?? (await decide(quote));
+    // Order invoices need the live balance for the cash-reserve rule; fetch it before the synchronous decision.
+    const balance = kind === "order" ? await walletUsdc().catch(() => null) : null;
+    const decision = commonChecks(url, quote) ?? decide(quote, balance);
     if (!decision.ok) return refuse({ kind, why, url, priceUsd: quote.priceUsd }, decision);
 
+    inFlightUnits += quote.units;
     emit({ type: "paying", kind, url, priceUsd: quote.priceUsd, reason: decision.reason });
     try {
-      const res = await payingFetch(quote.units, capUsd)(url, { method });
+      // Retried only when it failed while BUILDING the payment (nothing signed or sent yet).
+      const res = await oneAtATime(() => retry(() => payingFetch(quote.units, capUsd)(url, { method }),
+        { when: (e) => /Failed to create payment payload/i.test(e.message) && isNetworkError(e) }));
       const header = res.headers.get("PAYMENT-RESPONSE");
       const settlement = header ? decodePaymentResponseHeader(header) : null;
-      if (!res.ok || !settlement?.success) throw new Error(`payment not confirmed (HTTP ${res.status})`);
+      if (!res.ok || !settlement?.success) {
+        const body = await res.json().catch(() => ({}));
+        const why = settlement?.errorReason || body.error || body.errorReason;
+        throw new Error(`payment not confirmed (HTTP ${res.status}${why ? `: ${why}` : ""})`);
+      }
 
-      if (kind === "data") dataSpentUnits += quote.units;
       appendSpendLog({ date: today(), at: new Date().toISOString(), kind, why, url,
                        units: String(quote.units), priceUsd: quote.priceUsd, tx: settlement.transaction });
       const entry = { kind, why, url, priceUsd: quote.priceUsd, paid: true, payTo: quote.payTo,
@@ -134,10 +181,10 @@ export function createWallet(emit = () => {}) {
       emit({ type: "paid", ...entry, dataSpentUsd: toUsd(dataSpentUnits) });
       return { ok: true, data: await res.json(), payment: entry };
     } catch (e) {
+      release(quote);
       // The x402 client's own safeguards (Layer 2) stopped it before signing: a refusal, not a crash.
       if (/filtered out by policies|rejected by spendControls|spend control/i.test(e.message))
         return refuse({ kind, why, url, priceUsd: quote.priceUsd }, fail("client safeguard", "the price was above what we approved, so nothing was signed"));
-      // Failed while building the payment: nothing was signed or sent.
       if (/insufficient balance/i.test(e.message))
         return refuse({ kind, why, url, priceUsd: quote.priceUsd }, fail("wallet balance", `Korta's wallet doesn't hold enough USDC (top up: ${usdc.faucetUrl})`));
       const beforeSigning = /Failed to create payment payload/i.test(e.message);
@@ -145,6 +192,8 @@ export function createWallet(emit = () => {}) {
       emit({ type: "error", url, message: e.message,
              hint: beforeSigning ? "Nothing was signed or sent." : "Check the explorer: a settlement can land even when the server reports a failure." });
       return { ok: false, reason: e.message };
+    } finally {
+      inFlightUnits -= quote.units;
     }
   }
 
@@ -157,23 +206,25 @@ export function createWallet(emit = () => {}) {
   // Quotes and demand signals: small, automatic, within the data limits.
   const buyData = (why, path) => purchase({
     kind: "data", why, path, capUsd: policy.dataMaxPerRequestUsd,
-    decide: async (quote) => {
+    decide: (quote) => {
       if (quote.units > toUnits(policy.dataMaxPerRequestUsd)) return fail("price cap", `$${quote.priceUsd} is over the per-request cap for data`);
       if (dataSpentUnits + quote.units > toUnits(policy.dataBudgetPerRunUsd)) return fail("data budget", "would go over this run's data budget");
+      dataSpentUnits += quote.units; // reserve now; released if the payment fails
       return pass(`$${quote.priceUsd} is within the data limits`);
     },
+    release: (quote) => { dataSpentUnits -= quote.units; },
   });
 
   // A supplier invoice the owner already approved at `approvedUsd`.
   const payInvoice = (why, path, approvedUsd) => purchase({
     kind: "order", why, path, method: "POST", capUsd: policy.orderMaxUsd,
-    decide: async (quote) => {
+    decide: (quote, balance) => {
       if (quote.units > toUnits(approvedUsd))
-        return fail("price changed", `the invoice is $${quote.priceUsd} but the owner approved $${approvedUsd}`);
-      if (quote.units > toUnits(policy.orderMaxUsd)) return fail("order cap", `$${quote.priceUsd} is over the per-order limit`);
-      const after = (await walletUsdc()) - quote.priceUsd;
-      if (after < policy.cashReserveUsd) return fail("cash reserve", "paying would take the wallet below the owner's cash reserve");
-      return pass(`approved by the owner; $${quote.priceUsd} is within the order limits`);
+        return fail("price changed", `the invoice is $${quote.priceUsd.toFixed(2)} but the owner approved $${approvedUsd.toFixed(2)}`);
+      if (quote.units > toUnits(policy.orderMaxUsd)) return fail("order cap", `$${quote.priceUsd.toFixed(2)} is over the per-order limit`);
+      if (balance == null) return fail("balance unknown", "couldn't read the wallet balance to check the cash reserve, so nothing was paid");
+      if (balance - quote.priceUsd < policy.cashReserveUsd) return fail("cash reserve", "paying would take the wallet below the owner's cash reserve");
+      return pass(`approved by the owner; $${quote.priceUsd.toFixed(2)} is within the order limits`);
     },
   });
 

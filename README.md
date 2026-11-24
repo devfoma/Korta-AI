@@ -13,23 +13,100 @@ owner's spending rules.
 
 ## What Korta does
 
-1. Checks stock: which fast movers run out before a delivery could arrive
-2. Buys a local demand signal via x402, only when it's worth the price
-3. Buys quotes from suppliers via x402 and compares arrival time, cost and stock
-4. Proposes one order, with the reasons and an offer comparison
-5. On the owner's approval, pays the supplier invoice via x402 and updates the records
+1. **Checks stock:** which fast movers run out before a delivery could arrive
+2. **Buys a demand signal** via x402 ($0.005), only when this week's sales look unusual
+3. **Buys quotes** from each supplier via x402 ($0.002 each) and compares arrival time, cost and stock
+4. **Proposes one order** to the owner, with the reasons and an offer comparison
+5. **On approval, pays the supplier invoice** via x402 straight into the supplier's wallet, and updates the records
 
-Limits live in code, never in the AI prompt, and a scenario suite checks the agent's judgment and safety.
+Remove the payment and Korta can't get quotes or pay the supplier, so the restock never happens.
+
+## Built to be trusted
+
+The owner's rules live in code ([src/wallet/index.mjs](src/wallet/index.mjs)), never in the AI prompt:
+
+| Rule | What it stops |
+|---|---|
+| Allowlisted hosts + known payee wallets | Paying anyone Korta wasn't set up to pay |
+| Data: per-request cap and per-run budget | Runaway spending on quotes and data |
+| Orders: owner approval, per-order cap, cash reserve | Orders the owner didn't agree to or can't afford |
+| Pay at most the approved amount | A supplier raising the price after the owner said yes |
+| Daily budget across everything | Slow leaks over many runs |
+| Wallet balance | Everything else: it can't spend what it doesn't hold |
+
+Supplier text is treated as data, never as instructions. A failed network call never changes what gets ordered.
+
+## Quick start (about 10 minutes)
+
+You need **Node.js 22+**.
+
+```bash
+npm install
+npm run setup     # creates .env and 5 testnet wallets (Korta + 3 suppliers + market data)
+```
+
+Give Korta test USDC: open https://faucet.circle.com, choose **Stellar Testnet**, paste the Korta address that
+setup printed. Then:
+
+```bash
+npm run check     # ✓ Ready to demo.
+npm start         # Supplier Network on :4021 + Korta dashboard on http://localhost:4022
+```
+
+Open http://localhost:4022 and tap **Check my stock**.
+
+**AI brain (optional):** add `OPENAI_API_KEY`, `OPENAI_MODEL` and `KORTA_BRAIN=ai` to `.env`. Without them the
+scripted brain runs the same tools under the same rules.
+
+### Other commands
+
+```bash
+npm run restock                 # a run in the terminal (asks y/N before ordering)
+npm run restock -- --decline    # …and always decline (spends only on data)
+npm test                        # stock maths, budget rules and 12 offline scenarios (no network, no money)
+```
+
+### Demo scenarios
+
+In the dashboard, open **Demo controls** to switch what the suppliers do:
+
+| Scenario | What Korta should do |
+|---|---|
+| Default | Pick Bola (delivers tomorrow) over Adeyemi (0.30 cheaper, but arrives after rice runs out) |
+| Everyone delivers tomorrow | Pick the cheapest |
+| Supplier B is out of rice | Switch to Coastline |
+| Supplier B raises its price after quoting | Owner approves 4.20, invoice says 4.62 → refused, nothing signed |
+| Injected instructions in a quote | Ignore them |
+| Normal demand | Smaller order (no festive uplift) |
+
+**Reset demo shop** puts the stock back.
+
+## How it's built
+
+```
+src/
+  agent/        Korta: tools, AI brain (OpenAI), scripted brain, stock + budget + offer maths
+  wallet/       x402 paying client + the owner's rules
+  suppliers/    the Supplier Network: x402 sellers, each paid into its own wallet
+  console/      the owner's dashboard (Express + SSE, vanilla JS)
+  store/        the shop's records (JSON file)
+scripts/        setup, check, seed, start
+test/           unit + offline scenario tests
+```
+
+## Troubleshooting
+
+- **`npm run check` says the balance is too low:** top up at https://faucet.circle.com (Stellar Testnet).
+- **"payment not confirmed … txInsufficientFee":** the facilitator rejected simultaneous settlements. Korta
+  settles one payment at a time; if you see this, make sure only one Korta process uses the wallet.
+- **A first paid request fails with HTTP 500:** the Supplier Network couldn't reach the facilitator at startup.
+  Korta retries automatically; if it persists, check your connection or switch `FACILITATOR` in `.env`.
+- **Port in use:** stop the other process, or change `PORT` / `CONSOLE_PORT` / `SUPPLIERS_BASE_URL` in `.env`.
 
 ## Docs
 
 - [Project brief](docs/PROJECT_BRIEF.md) · [PDF](docs/Korta_AI_Project_Brief.pdf)
 - [2-day build plan](docs/BUILD_PLAN.md)
-
-## Status
-
-🚧 Hackathon build in progress (EmpowerHer: Building the Agent Economy). Setup and run instructions land with
-the first code drop.
 
 ## Credits
 

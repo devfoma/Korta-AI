@@ -52,10 +52,13 @@ export async function runAiBrain(task, toolbox, emit) {
     if (!message.tool_calls?.length) return { summary: message.content?.trim() || "(no answer)" };
     if (message.content) emit({ type: "thought", text: message.content });
 
-    for (const call of message.tool_calls) {
-      const output = await toolbox.run(call.function.name, parseArgs(call.function.arguments));
-      messages.push({ role: "tool", tool_call_id: call.id, content: JSON.stringify(output).slice(0, 6000) });
-    }
+    // Several quotes asked for at once are independent: buy them in parallel. Anything else runs in order.
+    const calls = message.tool_calls;
+    const parallel = calls.length > 1 && calls.every((c) => c.function.name === "buy_quote");
+    const outputs = parallel
+      ? await Promise.all(calls.map((c) => toolbox.run(c.function.name, parseArgs(c.function.arguments))))
+      : await calls.reduce(async (acc, c) => [...(await acc), await toolbox.run(c.function.name, parseArgs(c.function.arguments))], Promise.resolve([]));
+    calls.forEach((call, i) => messages.push({ role: "tool", tool_call_id: call.id, content: JSON.stringify(outputs[i]).slice(0, 6000) }));
   }
   return { summary: `Stopped after ${config.ai.maxSteps} steps without a final answer.` };
 }
